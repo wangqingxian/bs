@@ -1,0 +1,31 @@
+{
+  "name": "meta.umeditor",
+  "version": "0.0.2",
+  "homepage": "https://github.com/dylike/meta.umeditor",
+  "authors": [
+    "dylike"
+  ],
+  "description": "AngularJs,UMEditor,MetaLab",
+  "main": [
+    "lib/umeditor/dist/utf8-php/umeditor.js",
+    "lib/umeditor/dist/utf8-php/umeditor.config.js",
+    "lib/umeditor/dist/utf8-php/themes/default/css/umeditor.css",
+    "src/meta.umeditor.js"
+  ],
+  "keywords": [
+    "AngularJs",
+    "UMEditor",
+    "MetaLab"
+  ],
+  "license": "MIT",
+  "_release": "0.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.2",
+    "commit": "dbe3d4e750e500f0afe20891c98d48abf112d3d7"
+  },
+  "_source": "https://github.com/dylike/meta.umeditor.git",
+  "_target": "^0.0.2",
+  "_originalSource": "meta.umeditor",
+  "_direct": true
+}

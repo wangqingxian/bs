@@ -1,0 +1,65 @@
+<div ng-controller="moduleInfoCtrl">
+    <div class="col-xs-12" >
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.info({id:moduleModifyCtrlID})" ui-sref-active="btn-success">基础信息</button>
+        </div>
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.field({id:moduleModifyCtrlID})" ui-sref-active="btn-success">拥有字段</button>
+        </div>
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.check({id:moduleModifyCtrlID})" ui-sref-active="btn-success">重新生成</button>
+        </div>
+    </div>
+    <div class="col-xs-8" style="margin-top: 15px;">
+        <form name="edit_form" novalidate>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">模块中文名</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.module_name" name="module_name"
+                           required ng-minlength="1" ng-maxlength="20" />
+                    <div ng-messages="edit_form.module_name.$dirty && edit_form.module_name.$error">
+                        <p class="text-danger" ng-message="required">模块中文名是必填项!</p>
+                        <p class="text-danger" ng-message="minlength">模块中文名太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">模块中文名太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required" >
+                    <span>*</span>
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">模块英文名</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control "
+                           name="module" ng-model="edit.module"
+                           required nochinese ng-minlength="1" ng-maxlength="45" tablename notclass/>
+                    <div ng-messages="edit_form.module.$dirty && edit_form.module.$error">
+                        <p class="text-danger" ng-message="required">模块英文名为必填项!</p>
+                        <p class="text-danger" ng-message="nochinese">模块英文名不能有中文</p>
+                        <p class="text-danger" ng-message="tablename">模块英文名不合法</p>
+                        <p class="text-danger" ng-message="notclass">模块英文名冲突</p>
+                        <p class="text-danger" ng-message="minlength">模块英文名太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">模块英文名太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+        </form>
+        <div class="row" style="padding-right: 60px;">
+            <button type="button" class="btn btn-default btn-md pull-right"
+                    ng-click="cancel()" >取消</button>
+            <button type="button" class="btn btn-primary btn-md pull-right"
+                    ng-click="next()" ng-disabled="edit_form.$invalid">下一步</button>
+        </div>
+    </div>
+</div>
+
+<script src="admin/partial/module/info.js"></script>

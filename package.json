@@ -1,0 +1,39 @@
+{
+  "name": "bs",
+  "version": "1.0.0",
+  "description": "bs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yel",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angular-animate": "^1.5.8",
+    "angular-i18n": "^1.5.8",
+    "angular-messages": "^1.5.8",
+    "angular-sanitize": "^1.6.2",
+    "angular-ui-bootstrap": "^1.3.3",
+    "angular-ui-grid": "^4.0.2",
+    "angular-ui-router": "^0.4.2",
+    "angular-ui-scroll": "^1.6.0",
+    "bootstrap": "^3.3.7",
+    "echarts": "^3.4.0",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.1.1",
+    "kuitos-angular-utils": "^1.3.10",
+    "ng-echarts": "^3.0.1",
+    "ng-file-upload": "^12.2.13",
+    "oclazyload": "^1.0.9",
+    "videogular": "^1.4.4",
+    "videogular-angulartics": "^1.4.4",
+    "videogular-buffering": "^1.4.4",
+    "videogular-controls": "^1.4.4",
+    "videogular-dash": "^1.4.4",
+    "videogular-ima-ads": "^1.4.4",
+    "videogular-overlay-play": "^1.4.4",
+    "videogular-poster": "^1.4.4",
+    "videogular-themes-default": "^1.4.4"
+  }
+}

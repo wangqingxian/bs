@@ -1,0 +1,114 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">{{isNew?"添加":"修改"}}</h4>
+    </div>
+    <div class="modal-body">
+        <form name="edit_form" novalidate>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">帐号</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.username" name="username"
+                           required ng-minlength="4" ng-maxlength="25" nochinese=""/>
+                    <div ng-messages="edit_form.username.$dirty && edit_form.username.$error">
+                        <p class="text-danger" ng-message="required">帐号是必填项!</p>
+                        <p class="text-danger" ng-message="minlength">帐号太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">帐号太长啦</p>
+                        <p class="text-danger" ng-message="nochinese">帐号不能有中文</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required" >
+                    <span>*</span>
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">密码</label><a style="color: blue;" ng-click="randomString(15)">随机生成</a>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control "
+                           name="password" ng-model="edit.password"
+                           required nochinese ng-minlength="5" ng-maxlength="15" register/>
+                    <div ng-messages="edit_form.password.$dirty && edit_form.password.$error">
+                        <p class="text-danger" ng-message="required">密码为必填项!</p>
+                        <p class="text-danger" ng-message="nochinese">密码不能有中文</p>
+                        <p class="text-danger" ng-message="minlength">密码太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">密码太长啦</p>
+                        <p class="text-danger" ng-message="register">密码中含有~!@#$%^&*以外的特殊字符</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">全名</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.fullname" name="fullname"
+                           ng-minlength="1" ng-maxlength="10"/>
+                    <div ng-messages="edit_form.fullname.$dirty && edit_form.fullname.$error">
+
+                        <p class="text-danger" ng-message="minlength">帐号太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">帐号太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 " >
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">用户分组</label>
+                </div>
+                <div class="col-md-7">
+                    <select class="form-control" ng-options="item.group_id as item.group_name for item in groups"
+                            ng-model="edit.group_id" name="group_id"
+                            ng-minlength="1" ng-maxlength="10">
+                        <option value=""></option>
+                    </select>
+                    <div ng-messages="edit_form.group_id.$dirty && edit_form.group_id.$error">
+
+                        <p class="text-danger" ng-message="minlength">帐号太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">帐号太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 " >
+
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-md-4" >
+                    <label class="edit-label">验证码</label>
+                </div>
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="col-xs-6" id="yzm" ng-click="yzm()"></div>
+                        <div class="col-xs-6">
+                            <input class="form-control " type="text" style="display: inline-block"
+                                   name="encrypt" ng-model="edit.encrypt" required >
+                        </div>
+                    </div>
+                    <div ng-messages="edit_form.encrypt.$dirty && edit_form.encrypt.$error">
+                        <p class="text-danger" ng-message="required">验证码是必填的</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-md" ng-click="cancel()">取消</button>
+        <button type="button" class="btn btn-primary btn-md"
+                ng-click="register()" ng-disabled="edit_form.$invalid">保存</button>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+<div ng-controller="moduleCheckCtrl">
+    <div class="col-xs-12" >
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.info({id:moduleModifyCtrlID})" ui-sref-active="btn-success">基础信息</button>
+        </div>
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.field({id:moduleModifyCtrlID})" ui-sref-active="btn-success">拥有字段</button>
+        </div>
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.check({id:moduleModifyCtrlID})" ui-sref-active="btn-success">重新生成</button>
+        </div>
+    </div>
+    <div ng-if="!success">
+        <div class="col-xs-12">
+            <table class="table">
+                <tr>
+                    <td>模块信息</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块英文名称</td>
+                    <td>{{show.module}}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块中文名称</td>
+                    <td>{{show.module_name}}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块是否加入左侧菜单</td>
+                    <td ng-if="show.is_left=='1'">是</td>
+                    <td ng-if="show.is_left=='0'">否</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块是否启用</td>
+                    <td ng-if="show.available">是</td>
+                    <td ng-if="!show.available">否</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>拥有的字段</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr ng-repeat="val in show.keys">
+                    <td>{{val.key}}</td>
+                    <td>{{val.key_name}}</td>
+                    <td>{{$parent.options[val.form]["name"]}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-xs-12 ">
+            <button class="btn btn-default pull-right" ng-click="cancel()">取消</button>
+            <button class="btn btn-success pull-right" ng-click="last()">重新生成</button>
+        </div>
+    </div>
+    <div ng-if="success">
+        <div class="col-xs-12" style="margin-top: 10px;">
+            <p>{{result.message}}</p>
+            <p>您可以尝试访问 <a ng-href="{{result.href}}" style="color: blue;" target="_blank">{{result.href}}</a>来验证模块生成是否成功</p>
+        </div>
+        <div class="col-xs-12">
+            <button class="btn btn-success " ng-click="check()">验证</button>
+            <button class="btn btn-default " ng-click="cancel()">返回管理页面</button>
+        </div>
+    </div>
+</div>
+<script src="admin/partial/module/check.js"></script>

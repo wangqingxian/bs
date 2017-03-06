@@ -1,0 +1,62 @@
+<div class="row" ng-controller="moduleManageCtrl">
+    <div class="col-xs-12" style="margin-bottom: 15px;">
+        <form class="form-inline">
+            <div class="form-group">
+                <label>名称:</label>
+                <input type="text" class="form-control htran-radius" ng-model="searchdata"  />
+            </div>
+            <div class="form-group">
+                <label class="sr-only">按钮组</label>
+                <a class="btn btn-primary" ng-click="newsearch()" >查询</a>
+                <a class="btn btn-primary" ng-click="clear()" >清除条件</a>
+                <span style="margin-left: 30px;">
+                    <a class="btn btn-success" ng-click="add()">添加模块</a>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div class="col-xs-12">
+        <table class="table table-hover table-striped" style="margin-bottom: 0px;">
+            <tbody>
+            <tr ng-click="checkAll(allChecked,show)">
+                <th>
+                    <input type="checkbox" ng-checked="allChecked"
+                           ng-click="checkAll(allChecked,show,$event)">
+                </th>
+                <th>模块名称</th>
+                <th>当前状态</th>
+                <th>最后修改时间</th>
+                <th>最后修改用户</th>
+                <th>操作</th>
+            </tr>
+            <tr ng-repeat="item in show " ng-click="checkSingle(item,show)">
+                <td>
+                    <input type="checkbox" ng-checked="item.checked"
+                           ng-click="checkSingle(item,show,$event)">
+                </td>
+                <td>{{item.module_name}}({{item.module}})</td>
+                <td ng-if="item.available==0">已禁用</td>
+                <td ng-if="item.available==1">已启用</td>
+                <td>{{item.modify_time}}</td>
+                <td>{{item.modify_user}}</td>
+                <td>
+                    <a class="btn btn-default" ng-if="item.is_left==1" ng-click="left(item,false,show)">从左侧移除</a>
+                    <a class="btn btn-default" ng-if="item.is_left==0" ng-click="left(item,true,show)">加入左侧菜单</a>
+                    <a class="btn btn-info" ng-click="modify(item,show)">配置模块</a>
+                    <a class="btn btn-success" ng-click="database(item,show)">数据源管理</a>
+                    <a class="btn btn-danger" ng-if="item.available==0" ng-click="available(item,true,show)">启用</a>
+                    <a class="btn btn-danger" ng-if="item.available==1" ng-click="available(item,false,show)">禁用</a>
+                    <a class="btn btn-danger" ng-click="delete(item)">删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <uib-pagination total-items="dataSize" ng-model="model.pageNum"
+                        boundary-link-numbers="true"
+                        class="pagination-sm"	boundary-links="true"
+                        previous-text="上一页" next-text="下一页" first-text="首页"
+                        last-text="末页" max-size="3" ng-change="changePage()" 	>
+        </uib-pagination>
+    </div>
+</div>
+<script src="admin/partial/module/manage.js" seq="0"></script>

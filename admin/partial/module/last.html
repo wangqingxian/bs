@@ -1,0 +1,65 @@
+<div class="row"  ng-controller="moduleLastCtrl"
+     style="background-color:#ffffff;padding-top: 10px;padding-bottom:15px;margin-right: 0px;min-height: 500px;" >
+    <div class="col-xs-12">
+        <p style="padding-left: 7px;font-size: 18px;">生成模块</p>
+    </div>
+    <div ng-if="!success">
+        <div class="col-xs-12">
+            <table class="table">
+                <tr>
+                    <td>模块信息</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块英文名称</td>
+                    <td>{{show.module}}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块中文名称</td>
+                    <td>{{show.module_name}}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块是否加入左侧菜单</td>
+                    <td ng-if="show.is_left=='1'">是</td>
+                    <td ng-if="show.is_left=='0'">否</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>模块是否启用</td>
+                    <td ng-if="show.available">是</td>
+                    <td ng-if="!show.available">否</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>拥有的字段</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr ng-repeat="val in show.keys">
+                    <td>{{val.key}}</td>
+                    <td>{{val.key_name}}</td>
+                    <td>{{$parent.options[val.form]["name"]}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-xs-12 ">
+            <button class="btn btn-default pull-right" ng-click="cancel()">取消</button>
+            <button class="btn btn-success pull-right" ng-click="last()">生成</button>
+        </div>
+    </div>
+    <div ng-if="success">
+        <div class="col-xs-12">
+            <p>{{result.message}}</p>
+            <p>您可以尝试访问 <a ng-href="{{result.href}}" style="color: blue;" target="_blank">{{result.href}}</a>来验证模块生成是否成功</p>
+        </div>
+        <div class="col-xs-12">
+            <button class="btn btn-success " ng-click="check()">验证</button>
+            <button class="btn btn-default " ng-click="cancel()">返回管理页面</button>
+        </div>
+    </div>
+</div>
+
+<script src="admin/partial/module/last.js" seq="0"></script>

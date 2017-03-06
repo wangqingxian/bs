@@ -1,0 +1,26 @@
+<div class="modal-content" >
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">{{isNew?"添加":"修改"}}</h4>
+    </div>
+    <div class="modal-body" >
+        <div style="border-bottom: 1px solid #e5e5e5;margin-bottom: 8px;font-size: 17px;">已拥有的权限</div>
+        <div class="row" style="margin:0 0 15px 0;height: 170px;overflow-y: auto;">
+            <div class="col-xs-6" style="padding:5px 0 5px 0;" ng-repeat="list in haved">
+                 <button class="btn btn-default" ng-click="pop(list)">{{list.controller}}/{{list.function}}</button>
+            </div>
+        </div>
+        <div style="border-bottom: 1px solid #e5e5e5;margin-bottom: 8px;font-size: 17px;">未拥有的权限</div>
+        <div class="row" style="margin:0 0 15px 0;height: 170px;overflow-y: auto;">
+            <div class="col-xs-6" style="padding:5px 0 5px 0;" ng-repeat="fuc in functions" ng-if="havfuc(fuc)">
+                <button class="btn btn-default" ng-click="push(fuc)" >{{fuc.controller}}/{{fuc.function}}</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-md" ng-click="cancel()">取消</button>
+        <button type="button" class="btn btn-primary btn-md" ng-click="update()" >保存</button>
+    </div>
+</div>

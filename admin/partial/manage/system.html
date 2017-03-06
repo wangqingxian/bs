@@ -1,0 +1,72 @@
+<div class="row" ng-controller="manageSystemCtrl">
+    <div class="col-xs-12">
+        <table class="table table-hover">
+            <thead>
+                <th colspan="4">服务器参数</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>操作系统</td>
+                    <td colspan="3">{{system.getOsRelease}}</td>
+                </tr>
+                <tr>
+                    <td>系统分类</td>
+                    <td colspan="3">{{system.getOsType}} {{system.getArchitecture}} {{system.getOsKernelVersion}}</td>
+                </tr>
+                <tr>
+                    <td>服务器IP</td>
+                    <td>{{system.getServerIP}}</td>
+                    <td>服务器端口号</td>
+                    <td>{{system.getWebPort}}</td>
+                </tr>
+                <tr>
+                    <td>服务器解释引擎</td>
+                    <td>{{system.getWebEngine}}</td>
+                    <td>服务器语言</td>
+                    <td>{{system.getLanguage}}</td>
+                </tr>
+                <tr>
+                    <td>服务器主机名</td>
+                    <td>{{system.getHostname}}</td>
+                    <td>服务器当前时间</td>
+                    <td>{{system.getSystemTime}}</td>
+                </tr>
+                <tr>
+                    <td>网站所在路径</td>
+                    <td>{{system.getWebPath}}</td>
+                    <td>所在磁盘剩余空间</td>
+                    <td>{{system.getDisk}}{{system.getDiskFree}}</td>
+                </tr>
+                <tr>
+                    <td>CPU型号</td>
+                    <td>{{system.getCpuModel}}</td>
+                    <td>核心/线程</td>
+                    <td>{{system.getCpuPhysicalCore+"核心/"+system.getCpuCores+"线程"}}</td>
+                </tr>
+                <tr>
+                    <td>内存总量</td>
+                    <td>{{system.getTotalMem}}</td>
+                    <td>磁盘总量</td>
+                    <td>{{system.getDisk}}{{system.getDiskTotal}}</td>
+                </tr>
+                <tr>
+                    <td>PHP版本</td>
+                    <td>{{system.getPhpVersion}}</td>
+                    <td>上传限制</td>
+                    <td>{{system.getUploadSize}}</td>
+                </tr>
+                <tr>
+                    <td>数据库类型</td>
+                    <td>{{system.getDbType}}</td>
+                    <td>数据库版本</td>
+                    <td>{{system.getDbVersion}}</td>
+                </tr>
+                <tr>
+                    <td>数据库信息</td>
+                    <td colspan="3">{{system.getDbInfo}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="admin/partial/manage/system.js"></script>

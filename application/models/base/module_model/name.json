@@ -1,0 +1,10 @@
+{
+  "module_id":"模块ID",
+  "module_name":"模块中文名",
+  "module":"模块英文名",
+  "module_sref":"",
+  "modify_time":"最后修改的时间",
+  "modify_user":"最后修改的用户",
+  "available":"是否启用",
+  "is_left":"是否加入左侧菜单"
+}

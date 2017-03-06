@@ -1,0 +1,120 @@
+<div class="row" style="background-color:#ffffff;padding-top: 10px;margin-right: 0px;height: 500px;" ng-controller="userModifyCtrl">
+    <div class="col-xs-12">
+        <p style="padding-left: 7px;font-size: 18px;">修改用户</p>
+    </div>
+    <div class="col-xs-8" ng-if="res">
+        <form name="edit_form" novalidate>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">帐号</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" ng-model="edit.username" readonly/>
+                    <div ng-messages="edit_form.username.$dirty && edit_form.username.$error">
+
+                    </div>
+                </div>
+                <div class="col-xs-1 required" >
+                    <span>*</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">全名</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.fullname" name="fullname"
+                           ng-minlength="1" ng-maxlength="10"/>
+                    <div ng-messages="edit_form.fullname.$dirty && edit_form.fullname.$error">
+
+                        <p class="text-danger" ng-message="minlength">帐号太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">帐号太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 " >
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">邮箱</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.email" name="email"
+                           email />
+                    <div ng-messages="edit_form.email.$dirty && edit_form.email.$error">
+                        <p class="text-danger" ng-message="email">不是合法的邮箱</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 " >
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">QQ</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.qq" name="qq"
+                           ng-minlength="5" ng-maxlength="20" qq />
+                    <div ng-messages="edit_form.qq.$dirty && edit_form.qq.$error">
+
+                        <p class="text-danger" ng-message="minlength">QQ号太短啦</p>
+                        <p class="text-danger" ng-message="qq">不是合法的QQ号</p>
+                        <p class="text-danger" ng-message="maxlength">QQ号太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 " >
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">微信</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.weixin" name="weixin"
+                           ng-minlength="1" ng-maxlength="20" />
+                    <div ng-messages="edit_form.weixin.$dirty && edit_form.weixin.$error">
+
+                        <p class="text-danger" ng-message="minlength">太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 " >
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="edit-label">手机号</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.mobile" name="mobile"
+                           telphone />
+                    <div ng-messages="edit_form.mobile.$dirty && edit_form.mobile.$error">
+
+                        <p class="text-danger" ng-message="telphone">不是合法的手机号</p>
+
+                    </div>
+                </div>
+                <div class="col-xs-1 " >
+
+                </div>
+            </div>
+        </form>
+        <div class="row" style="padding-right: 60px;">
+            <button type="button" class="btn btn-primary btn-md pull-right"
+                    ng-click="modify()" ng-disabled="edit_form.$invalid">保存</button>
+        </div>
+    </div>
+</div>
+<script src="admin/partial/user/modify.js" seq="0"></script>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>angular umeditor</title>
+    <!--<link type="text/css" href="../lib/umeditor/dist/utf8-php/themes/default/css/umeditor.css">-->
+    <link type="text/css"
+          href="./lib/umeditor/dist/utf8-php/themes/default/css/umeditor.css"
+          rel="stylesheet">
+
+    <style>
+        .simple {
+            /* box */
+            position: relative;
+            margin: 5px;
+
+            /* self block */
+
+            /* font */
+        }
+
+        .all {
+            position: relative;
+            margin: 5px;
+        }
+
+        .model {
+            position: absolute;
+            top: 0px;
+            right: -210px;
+
+            width: 200px;
+            height: 100%;
+            border: 1px dashed #ccc;
+        }
+    </style>
+</head>
+<body ng-app="app">
+
+<!-- controller -->
+<div ng-controller="controller" style="width:800px;margin:auto;">
+    <!-- simple demo -->
+    <div class="simple">
+        <script type="text/html" style="margin:auto;height:300px;width:100%;" ng-model="model" meta-umeditor
+                meta-umeditor-placeholder="提示文案!这里是简单的示例">
+        </script>
+        <div class="model">
+            <div ng-bind="model"></div>
+        </div>
+    </div>
+    <input type="text" ng-model="model"/>
+
+    <!-- end simple demo -->
+    <!-- complete demo -->
+    <div class="all">
+        <script type="text/html" style="margin:auto;height:300px;width:100%;" ng-model="model" meta-umeditor
+                meta-umeditor-config='config'
+                meta-umeditor-placeholder="提示文案!这里是完整的示例">
+        </script>
+        <div class="model">
+            <div ng-bind="model"></div>
+        </div>
+    </div>
+    <!-- end complete demo -->
+</div>
+<script
+        src="./lib/umeditor/dist/utf8-php/third-party/jquery.min.js"></script>
+<script
+        src="./lib/umeditor/dist/utf8-php/umeditor.js"></script>
+<script
+        src="./lib/umeditor/dist/utf8-php/umeditor.config.js"></script>
+<script src="//cdn.bootcss.com/angular.js/1.5.8/angular.js"></script>
+<script src="./src/meta.umeditor.js"></script>
+
+<script>
+    var app = angular.module('app', [
+        'meta.umeditor'
+    ]).run(['$rootScope', function ($rootScope) {
+
+    }]);
+
+    app.controller('controller', function ($scope) {
+        $scope.config = {};
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<div ng-controller="moduleFieldCtrl">
+    <div class="col-xs-12" >
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.info({id:moduleModifyCtrlID})" ui-sref-active="btn-success">基础信息</button>
+        </div>
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.field({id:moduleModifyCtrlID})" ui-sref-active="btn-success">拥有字段</button>
+        </div>
+        <div class="col-xs-4" style="padding: 0;">
+            <button class="btn btn-block btn-default" ui-sref="module.modify.check({id:moduleModifyCtrlID})" ui-sref-active="btn-success">重新生成</button>
+        </div>
+    </div>
+    <div class="col-xs-12" style="margin-top: 15px;padding-left: 20px;">
+        <p style="font-size: 18px;">{{edit.module_name}}:({{edit.module}}表)</p>
+    </div>
+    <div class="col-xs-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>英文名</th>
+                    <th>中文名</th>
+                    <th>字段类型</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{edit.keys[edit.primary].key}}</td>
+                    <td>{{edit.keys[edit.primary].key_name}}</td>
+                    <td>{{edit.keys[edit.primary].type}}</td>
+                    <td >—</td>
+                </tr>
+                <tr ng-repeat="field in edit.keys" ng-if="field.key!=edit.primary">
+                    <td>{{field.key}}</td>
+                    <td>{{field.key_name}}</td>
+                    <td>{{$parent.options[field.form].name}}</td>
+                    <td>
+                        <button class="btn btn-danger" ng-click="delete_field(field)">删除</button>
+                        <button class="btn btn-danger" ng-click="modify_field(field)">修改</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row" style="padding-right: 60px;">
+            <button type="button" class="btn btn-default pull-right" ng-click="cancel()">取消</button>
+            <button type="button" class="btn btn-primary btn-md pull-right"
+                    ng-click="next()" >下一步</button>
+            <button type="button" class="btn btn-success pull-right"
+                    ng-click="add_field()">添加字段</button>
+        </div>
+    </div>
+</div>
+
+<script src="admin/partial/module/field.js"></script>

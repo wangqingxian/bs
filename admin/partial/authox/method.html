@@ -1,0 +1,55 @@
+<div class="row" ng-controller="methodCtrl">
+    <div class="col-xs-12" style="margin-bottom: 15px;">
+        <form class="form-inline">
+            <div class="form-group">
+                <label>方法名称:</label>
+                <input type="text" class="form-control htran-radius" ng-model="searchdata[0]"  />
+            </div>
+            <div class="form-group">
+                <label>控制器名称:</label>
+                <input type="text" class="form-control htran-radius" ng-model="searchdata[1]"  />
+            </div>
+            <div class="form-group">
+                <label class="sr-only">按钮组</label>
+                <a class="btn btn-primary" ng-click="newsearch()" >查询</a>
+                <a class="btn btn-primary" ng-click="clear()" >清除条件</a>
+                <span style="margin-left: 30px;">
+                    <a class="btn btn-success" ng-click="add()">添加</a>
+                    <a class="btn btn-danger" ng-click="del()" >删除</a>
+                    <a class="btn btn-info" ng-click="modify()">修改</a>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div class="col-xs-12">
+        <table class="table table-hover table-striped" style="margin-bottom: 0px;">
+            <tbody>
+            <tr ng-click="checkAll(allChecked,show)">
+                <th>
+                    <input type="checkbox" ng-checked="allChecked"
+                           ng-click="checkAll(allChecked,show,$event)">
+                </th>
+                <th>方法中文名</th>
+                <th>方法英文名</th>
+                <th>方法所属控制器</th>
+            </tr>
+            <tr ng-repeat="item in show " ng-click="checkSingle(item,show)">
+                <td>
+                    <input type="checkbox" ng-checked="item.checked"
+                           ng-click="checkSingle(item,show,$event)">
+                </td>
+                <td>{{item.function_name}}</td>
+                <td>{{item.function}}</td>
+                <td>{{item.controller}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <uib-pagination total-items="dataSize" ng-model="model.pageNum"
+                        boundary-link-numbers="true"
+                        class="pagination-sm"	boundary-links="true"
+                        previous-text="上一页" next-text="下一页" first-text="首页"
+                        last-text="末页" max-size="3" ng-change="changePage()" 	>
+        </uib-pagination>
+    </div>
+</div>
+<script src="admin/partial/authox/method.js" seq="0"></script>

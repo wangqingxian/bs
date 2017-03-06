@@ -1,0 +1,75 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">{{isNew?"添加":"修改"}}</h4>
+    </div>
+    <div class="modal-body">
+        <form name="edit_form" novalidate>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">方法中文名称</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.function_name" name="function_name"
+                           required ng-minlength="1" ng-maxlength="30"/>
+                    <div ng-messages="edit_form.function_name.$dirty && edit_form.function_name.$error">
+                        <p class="text-danger" ng-message="required">中文名称是必填项!</p>
+                        <p class="text-danger" ng-message="minlength">中文名称太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">中文名称太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required" >
+                    <span>*</span>
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">方法英文名称</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control "
+                           name="function" ng-model="edit.function"
+                           required nochinese ng-minlength="1" ng-maxlength="50"/>
+                    <div ng-messages="edit_form.function.$dirty && edit_form.function.$error">
+                        <p class="text-danger" ng-message="required">方法英文名称为必填项!</p>
+                        <p class="text-danger" ng-message="nochinese">方法英文名称必须是英文</p>
+                        <p class="text-danger" ng-message="minlength">方法英文名称太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">方法英文名称太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">所属控制器</label>
+                </div>
+                <div class="col-md-7">
+                    <select class="form-control "
+                              name="controller" ng-model="edit.controller_id"
+                              ng-maxlength="60" ng-change="select()" required>
+                        <option ng-repeat="item in controller" value="{{item.controller_id}}"
+                                ng-selected="edit.controller_id==item.controller_id" >{{item.controller_name}}</option>
+                    </select>
+                    <div ng-messages="edit_form.controller.$dirty && edit_form.controller.$error">
+                        <p class="text-danger" ng-message="required">所属控制器是必填的！</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-md" ng-click="cancel()">取消</button>
+        <button type="button" class="btn btn-primary btn-md"
+                ng-click="add()" ng-if="isNew" ng-disabled="edit_form.$invalid">保存</button>
+        <button type="button" class="btn btn-primary btn-md" ng-disabled="edit_form.$invalid"
+                ng-click="modify()" ng-if="!isNew">保存</button>
+    </div>
+</div>

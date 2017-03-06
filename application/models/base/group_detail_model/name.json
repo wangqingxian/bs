@@ -1,0 +1,8 @@
+{
+  "detail_id":"分组详情ID",
+  "group_id":"分组ID",
+  "controller_id":"控制器ID",
+  "controller":"控制器名称",
+  "function_id":"方法ID",
+  "function":"方法名称"
+}

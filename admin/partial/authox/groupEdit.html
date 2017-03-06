@@ -1,0 +1,37 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">{{isNew?"添加":"修改"}}</h4>
+    </div>
+    <div class="modal-body">
+        <form name="edit_form" novalidate>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">分组名称</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.group_name" name="group_name"
+                           required ng-minlength="1" ng-maxlength="30"/>
+                    <div ng-messages="edit_form.group_name.$dirty && edit_form.group_name.$error">
+                        <p class="text-danger" ng-message="required">分组名称是必填项!</p>
+                        <p class="text-danger" ng-message="minlength">分组名称太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">分组名称太长啦</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required" >
+                    <span>*</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-md" ng-click="cancel()">取消</button>
+        <button type="button" class="btn btn-primary btn-md"
+                ng-click="add()" ng-if="isNew" ng-disabled="edit_form.$invalid">保存</button>
+        <button type="button" class="btn btn-primary btn-md" ng-disabled="edit_form.$invalid"
+                ng-click="modify()" ng-if="!isNew">保存</button>
+    </div>
+</div>

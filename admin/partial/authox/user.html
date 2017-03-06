@@ -1,0 +1,51 @@
+<div class="row" ng-controller="userAuthoxCtrl">
+    <div class="col-xs-12" style="margin-bottom: 15px;">
+        <form class="form-inline">
+            <div class="form-group">
+                <label>用户名称:</label>
+                <input type="text" class="form-control htran-radius" ng-model="searchdata"  />
+            </div>
+            <div class="form-group">
+                <label class="sr-only">按钮组</label>
+                <a class="btn btn-primary" ng-click="newsearch()" >查询</a>
+                <a class="btn btn-primary" ng-click="clear()" >清除条件</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-xs-12">
+        <table class="table table-hover table-striped" style="margin-bottom: 0px;">
+            <tbody>
+            <tr ng-click="checkAll(allChecked,show)">
+                <th>
+                    <input type="checkbox" ng-checked="allChecked"
+                           ng-click="checkAll(allChecked,show,$event)">
+                </th>
+                <th>用户帐号</th>
+                <th>用户名称</th>
+                <th>用户分组</th>
+                <th>操作</th>
+            </tr>
+            <tr ng-repeat="item in show " ng-click="checkSingle(item,show)">
+                <td>
+                    <input type="checkbox" ng-checked="item.checked"
+                           ng-click="checkSingle(item,show,$event)">
+                </td>
+                <td>{{item.username}}</td>
+                <td>{{item.fullname}}</td>
+                <td>{{item.group_name}}</td>
+                <td>
+                    <button ng-click="group(item,show)" class="btn btn-info">更换分组</button>
+                    <button ng-click="authox(item,show)" class="btn btn-info">额外权限</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <uib-pagination total-items="dataSize" ng-model="model.pageNum"
+                        boundary-link-numbers="true"
+                        class="pagination-sm"	boundary-links="true"
+                        previous-text="上一页" next-text="下一页" first-text="首页"
+                        last-text="末页" max-size="3" ng-change="changePage()" 	>
+        </uib-pagination>
+    </div>
+</div>
+<script src="admin/partial/authox/user.js" seq="0"></script>

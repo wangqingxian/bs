@@ -1,0 +1,67 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">删除</h4>
+    </div>
+    <div class="modal-body">
+        <ng-form name="edit_form" id="edit_form">
+            <div class="row">
+                <div class="col-xs-4">
+                    <label class="edit-label">字段英文名</label>
+                </div>
+                <div class="col-xs-7">
+                    <input class="form-control input-sm" name="key" type="text"
+                           ng-model="item.key" required tablefield ng-maxlength="30"/>
+                    <div ng-messages="edit_form.key.$dirty && edit_form.key.$error">
+                        <p class="text-danger" ng-message="required">此为必填项!</p>
+                        <p class="text-danger" ng-message="tablefield">不是合法的名称!</p>
+                        <p class="text-danger" ng-message="maxlength">太长了!</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <label class="edit-label">字段中文名</label>
+                </div>
+                <div class="col-xs-7">
+                    <input class="form-control input-sm" type="text" name="key_name"
+                           ng-model="item.key_name" required ng-maxlength="30"/>
+                    <div ng-messages="edit_form.key_name.$dirty && edit_form.key_name.$error">
+                        <p class="text-danger" ng-message="required">此为必填项!</p>
+                        <p class="text-danger" ng-message="maxlength">太长了!</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <label class="edit-label">字段类型</label>
+                </div>
+                <div class="col-xs-7">
+                    <select class="form-control input-sm" ng-model="item.form" required name="form"
+                            ng-options="option.id as option.name group by option.group for option in options">
+                        <option value="" style="display:none;"></option>
+                    </select>
+                    <div ng-messages="edit_form.form.$dirty && edit_form.form.$error">
+                        <p class="text-danger" ng-message="required">此为必填项!</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required">
+                    <span>*</span>
+                </div>
+            </div>
+        </ng-form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary"
+                ng-click="modify()" ng-disabled="edit_form.$invalid">添加</button>
+        <button type="button" class="btn btn-default"  ng-click="cancel()">取消</button>
+    </div>
+</div>

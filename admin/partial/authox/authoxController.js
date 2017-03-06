@@ -1,0 +1,59 @@
+/**
+ * Created by Administrator on 2017/2/13.
+ */
+angular.module("authoxController")
+.value("$authoxAction",{
+    deleteTemplate:"admin/partial/authox/delete.html",
+    controllerAdd:"controller/add",
+    controllerDelete:"controller/delete",
+    controllerModify:"controller/modify",
+    controllerPage:"controller/page",
+    controllerEditTemplate:"admin/partial/authox/controllerEdit.html",
+    methodAdd:"method/add",
+    methodDelete:"method/delete",
+    methodModify:"method/modify",
+    methodPage:"method/page",
+    methodEditTemplate:"admin/partial/authox/methodEdit.html",
+    groupAdd:"group/add",
+    groupDelete:"group/delete",
+    groupModify:"group/modify",
+    groupPage:"group/page",
+    groupEditTemplate:"admin/partial/authox/groupEdit.html",
+    groupdetailUpdate:"group_detail/update",
+    groupdetailHaved:"group_detail/haved",
+    groupdetailUpdateTemplate:"admin/partial/authox/groupdetailUpdate.html",
+    userPage:"user/page",
+    userModify:"user/modify",
+    usergroupChangeTemplate:"admin/partial/authox/groupChange.html",
+    authoxHaved:"authox/haved",
+    authoxUpdate:"authox/update",
+    usergroupChange:"user/gchange"
+})
+.controller("authoxCtrl",function ($rootScope,$scope,$http,$authoxAction)
+{
+    $scope.tree=[
+        {
+            "id": 1,
+            "title": "权限管理",
+            "sref":"authox.user",
+            "nodes": [
+                {
+                    "id":"1.1",
+                    "title":"控制器管理",
+                    "sref":"authox.controller",
+                    "nodes":[]
+                },
+                {
+                    "id":"1.2",
+                    "title":"方法管理",
+                    "sref":"authox.method",
+                },
+                {
+                    "id":"1.3",
+                    "title":"用户分组管理",
+                    "sref":"authox.group"
+                }
+            ]
+        },
+    ]
+})
