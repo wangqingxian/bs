@@ -11,6 +11,7 @@
   "dependencies": {
     "angular": "^1.5.8",
     "angular-animate": "^1.5.8",
+    "angular-bootstrap-colorpicker": "^3.0.25",
     "angular-i18n": "^1.5.8",
     "angular-messages": "^1.5.8",
     "angular-sanitize": "^1.6.2",
@@ -22,7 +23,10 @@
     "echarts": "^3.4.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.1.1",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-dist": "^1.12.1",
     "kuitos-angular-utils": "^1.3.10",
+    "lodash": "^4.17.4",
     "ng-echarts": "^3.0.1",
     "ng-file-upload": "^12.2.13",
     "oclazyload": "^1.0.9",
