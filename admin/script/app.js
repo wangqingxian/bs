@@ -5,6 +5,7 @@ angular.module("manageController",[]);
 angular.module("authoxController",[]);
 angular.module("userController",[]);
 angular.module("moduleController",[]);
+angular.module("htmlController",[]);
 var app=angular.module("ac",
     [   "ui.router",
         "ui.bootstrap",
@@ -20,7 +21,8 @@ var app=angular.module("ac",
         "manageController",
         "authoxController",
         "userController",
-        "moduleController"
+        "moduleController",
+        "htmlController"
     ]
 ).run(['$rootScope', function ($rootScope) {
 
@@ -35,6 +37,7 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                 .when("/user","/user/manage")
                 .when("/module","/module/manage")
                 .when("/module/modify","/module/modify/info")
+                .when("/html","/html/router")
                 .otherwise("/index/system");
 
             $stateProvider
@@ -205,6 +208,22 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                     {
                         return "module/api/"+$stateParams.module;
                     },
+                })
+                .state("html",{
+                    url:"/html",
+                    templateUrl:"admin/partial/html/html.html"
+                })
+                .state("html.router",{
+                    url:"/router",
+                    templateUrl:"admin/partial/html/router.html"
+                })
+                .state("html.template",{
+                    url:"/template",
+                    templateUrl:"admin/partial/html/template.html"
+                })
+                .state("html.edit",{
+                    url:"/edit", //只能看生成的源码
+                    templateUrl:"admin/partial/html/edit.html"
                 })
                 .state("error",{ //TODO:更换404,没有权限页面
                     url:"/error/:id",

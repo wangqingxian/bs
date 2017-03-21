@@ -1,0 +1,33 @@
+<div class="row" ng-controller="htmlManageCtrl" style="margin-right: 0;background-color: #ffffff;min-height: 500px;">
+    <div class="col-xs-12" style="padding-top: 15px;margin-bottom: 15px;">
+        <form class="form-inline">
+            <div class="form-group">
+                <label>名称:</label>
+                <input type="text" class="form-control htran-radius" ng-model="searchdata"  />
+            </div>
+            <div class="form-group">
+                <label class="sr-only">按钮组</label>
+                <a class="btn btn-primary" ng-click="clear()" >清除条件</a>
+                <span style="margin-left: 30px;">
+                    <a class="btn btn-success" ng-click="router()">添加路由</a>
+                    <a class="btn btn-danger" ng-click="delete()">删除路由</a>
+                    <a class="btn btn-info" ng-click="modify()">修改路由</a>
+                    <a class="btn btn-primary" ng-click="edit()">可视化编辑</a>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div class="col-xs-12" style="border-top: 1px solid gainsboro;margin-top: -5px;">
+        <div class="row" style="padding: 15px;">
+            <div ng-repeat="item in show|filter:{name:searchdata}"  ng-click="select(item,show)"
+                 class="col-xs-2 select-hover" style="text-align: center;height: 99px;">
+                <input type="checkbox" ng-checked="item.checked" ng-click="select(item,show)" class="pull-right">
+                <i class="fa fa-file-code-o fa-4x" style="margin-top: 20px;margin-left: 15px;" aria-hidden="true"></i>
+                <div style="width: 100%" class="noWrap" uib-tooltip="{{item.name}}">
+                    {{item.name}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="admin/partial/html/router.js" seq="0"></script>

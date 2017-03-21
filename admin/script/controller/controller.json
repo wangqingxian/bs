@@ -43,5 +43,9 @@
     "moduleController",
     "moduleManageCtrl",
     "moduleDeleteCtrl"
+  ],
+  "htmlController":[
+    "$htmlAction",
+    "htmlCtrl"
   ]
 }

@@ -1,0 +1,40 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">修改</h4>
+    </div>
+    <div class="modal-body">
+        <form name="edit_form" novalidate>
+            <div class="row" >
+                <div class="col-md-4">
+                    <label class="edit-label">模版名称</label>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" class="form-control"
+                           ng-model="edit.new" name="new"
+                           nochinese tablename
+                           required ng-minlength="1" ng-maxlength="30"/>
+                    <div ng-messages="edit_form.new.$dirty && edit_form.new.$error">
+                        <p class="text-danger" ng-message="required">名称是必填项!</p>
+                        <p class="text-danger" ng-message="minlength">名称太短啦</p>
+                        <p class="text-danger" ng-message="maxlength">名称太长啦</p>
+                        <p class="text-danger" ng-message="nochinese">名称不能有中文</p>
+                        <p class="text-danger" ng-message="tablename">名称不合适</p>
+                    </div>
+                </div>
+                <div class="col-xs-1 required" >
+                    <span>*</span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-md" ng-click="cancel()">取消</button>
+        <button type="button" class="btn btn-primary btn-md"
+                ng-click="modify()" ng-disabled="edit_form.$invalid">保存</button>
+    </div>
+</div>
+

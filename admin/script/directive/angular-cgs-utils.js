@@ -20,7 +20,7 @@ angular.module('angular-cgs-utils', [])
         }
     };
 })
-    .directive("qq", function () {
+.directive("qq", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
@@ -34,7 +34,7 @@ angular.module('angular-cgs-utils', [])
                     ngModel.$setValidity("qq", true);
                 }
                 else {
-                    if(viewValue!="")
+                    if (viewValue != "")
                         ngModel.$setValidity("qq", false);
                     else
                         ngModel.$setValidity("qq", true);
@@ -43,7 +43,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("email", function () {
+})
+.directive("email", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
@@ -57,7 +58,7 @@ angular.module('angular-cgs-utils', [])
                     ngModel.$setValidity("email", true);
                 }
                 else {
-                    if(viewValue!="")
+                    if (viewValue != "")
                         ngModel.$setValidity("email", false);
                     else
                         ngModel.$setValidity("email", true);
@@ -66,7 +67,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("port", function () {
+})
+.directive("port", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
@@ -89,7 +91,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("nochinese", function () {
+})
+.directive("nochinese", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
@@ -108,7 +111,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("register", function () {
+})
+.directive("register", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
@@ -128,7 +132,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("telphone", function () {
+})
+.directive("telphone", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
@@ -145,7 +150,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("threshold", function () {
+})
+.directive("threshold", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
@@ -162,7 +168,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive('toggleUl', function () {
+})
+.directive('toggleUl', function () {
     return {
         link: function (scope, element, attrs) {
 
@@ -177,8 +184,8 @@ angular.module('angular-cgs-utils', [])
             });
         }
     }
-
-}).directive('cgsEcharts', function () {
+})
+.directive('cgsEcharts', function () {
     return {
         require: '?ngModel',
         restrict: 'E',
@@ -208,19 +215,20 @@ angular.module('angular-cgs-utils', [])
             );
         }
     }
-}).directive("tablefield",function () {
+})
+.directive("tablefield", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
-            var table=/^(?!_)(?!.*?_$)[a-zA-Z_]+$/;
-            var t2=/^[a-zA-Z]+$/i;
-            var not=/^(?!(?:__halt_compiler|abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor|__class__|__dir__|__file__|__function__|__line__|__method__|__namespace__|__trait__|ci_controller|default|index|authox_controller|my_controller|api_controller|ci_model|my_model|base_model|api_model|authox|captcha|controller|group|group_detail|login|logout|manage|method|module|reload|user|welcome|pagenum|pagesize|select|like|order|checked|deletes)$)/;
+            var table = /^(?!_)(?!.*?_$)[a-zA-Z_]+$/;
+            var t2 = /^[a-zA-Z]+$/i;
+            var not = /^(?!(?:__halt_compiler|abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor|__class__|__dir__|__file__|__function__|__line__|__method__|__namespace__|__trait__|ci_controller|default|index|authox_controller|my_controller|api_controller|ci_model|my_model|base_model|api_model|authox|captcha|controller|group|group_detail|login|logout|manage|method|module|reload|user|welcome|pagenum|pagesize|select|like|order|checked|deletes)$)/;
             if (!ngModel) {
                 return false;
             }
             ngModel.$parsers.unshift(function (viewValue) {
-                v=angular.lowercase(viewValue);
-                if ((table.test(viewValue)||t2.test(viewValue)) && not.test(v)) {
+                v = angular.lowercase(viewValue);
+                if ((table.test(viewValue) || t2.test(viewValue)) && not.test(v)) {
                     //匹配
                     ngModel.$setValidity("tablefield", true);
                 }
@@ -231,18 +239,19 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("tablename",function () {
+})
+.directive("tablename", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
-            var table=/^[a-zA-Z][a-zA-Z0-9_]*[^_]$/;
-            var t2=/^[a-zA-Z]+$/i;
+            var table = /^(?!_)(?!.*?_$)[a-zA-Z][a-zA-Z0-9_]+$/;
+            var t2 = /^[a-zA-Z]+$/i;
             if (!ngModel) {
                 return false;
             }
             ngModel.$parsers.unshift(function (viewValue) {
 
-                if (table.test(viewValue)||t2.test(viewValue)) {
+                if (table.test(viewValue) || t2.test(viewValue)) {
                     //匹配
                     ngModel.$setValidity("tablename", true);
                 }
@@ -253,17 +262,18 @@ angular.module('angular-cgs-utils', [])
             });
         }
     };
-}).directive("notclass",function () {
+})
+.directive("notclass", function () {
     return {
         require: "ngModel",
         link: function (scope, element, attrs, ngModel) {
-            var notclass=/^(?!(?:__halt_compiler|abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor|__class__|__dir__|__file__|__function__|__line__|__method__|__namespace__|__trait__|ci_controller|default|index|authox_controller|my_controller|api_controller|ci_model|my_model|base_model|api_model|authox|captcha|controller|group|group_detail|login|logout|manage|method|module|reload|user|welcome)$)/;
+            var notclass = /^(?!(?:__halt_compiler|abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor|__class__|__dir__|__file__|__function__|__line__|__method__|__namespace__|__trait__|ci_controller|default|index|authox_controller|my_controller|api_controller|ci_model|my_model|base_model|api_model|authox|captcha|controller|group|group_detail|login|logout|manage|method|module|reload|user|welcome)$)/;
             //TODO: 记得将来写的控制器也加上
             if (!ngModel) {
                 return false;
             }
             ngModel.$parsers.unshift(function (viewValue) {
-                v=angular.lowercase(viewValue);
+                v = angular.lowercase(viewValue);
                 if (notclass.test(v)) {
                     //匹配
                     ngModel.$setValidity("notclass", true);
@@ -276,7 +286,6 @@ angular.module('angular-cgs-utils', [])
         }
     };
 })
-
 .directive('cgsGreet', ['$interval', 'dateFilter',
     function ($interval, dateFilter) {
         return {
@@ -381,29 +390,30 @@ angular.module('angular-cgs-utils', [])
                     });
                 }
             };
-        }])
+        }
+    ])
 
 
-// myApp.controller("MyAppCtrl", ['$scope', function($scope) {
-//     $scope.items = [{id: "x", value: 'carrot'},
-//         {id: "y", value: 'cucumber'},
-//         {id: "z", value: 'cabbage'}];
-// }]);
-
-.directive('dynamicName', function($compile, $parse) {
+    // myApp.controller("MyAppCtrl", ['$scope', function($scope) {
+    //     $scope.items = [{id: "x", value: 'carrot'},
+    //         {id: "y", value: 'cucumber'},
+    //         {id: "z", value: 'cabbage'}];
+    // }]);
+.directive('dynamicName', function ($compile, $parse) {
     return {
         restrict: 'A',
         terminal: true,
         priority: 100000,
-        link: function(scope, elem) {
+        link: function (scope, elem) {
             var name = $parse(elem.attr('dynamic-name'))(scope);
             elem.removeAttr('dynamic-name');
             elem.attr('name', name);
             $compile(elem)(scope);
         }
     };
-}).factory('uuid2', [
-    function() {
+})
+.factory('uuid2', [
+    function () {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -412,7 +422,7 @@ angular.module('angular-cgs-utils', [])
 
         return {
 
-            newuuid: function() {
+            newuuid: function () {
                 // http://www.ietf.org/rfc/rfc4122.txt
                 var s = [];
                 var hexDigits = "0123456789abcdef";
@@ -424,12 +434,12 @@ angular.module('angular-cgs-utils', [])
                 s[8] = s[13] = s[18] = s[23] = "-";
                 return s.join("");
             },
-            newguid: function() {
+            newguid: function () {
                 return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
                     s4() + '-' + s4() + s4() + s4();
             },
-            newid: function() {
-                return s4() + s4()  + s4()  + s4();
+            newid: function () {
+                return s4() + s4() + s4() + s4();
             }
         }
 

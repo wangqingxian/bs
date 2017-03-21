@@ -1,0 +1,23 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">删除</h4>
+    </div>
+    <div class="modal-body" style="font-size: 18px;">
+        <div class="row">
+            <div class="text text-center ">
+                当前选中了{{data.name}}，您确定要删除该路由时同时删除模版文件吗？
+            </div>
+            <div class="text-center">
+                <input type="radio" ng-model="data[0].real" value="true" ng-true-value="'true'">是
+                <input type="radio" ng-model="data[0].real" value="false" ng-true-value="'false'">否
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" ng-click="del()">确定</button>
+        <button type="button" class="btn btn-default"  ng-click="cancel()">取消</button>
+    </div>
+</div>
