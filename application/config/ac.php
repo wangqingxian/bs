@@ -20,6 +20,11 @@ $config["ac_menu"]=array(
         "icon"=>"plus",
         "sref"=>"module",
         "name"=>"API管理"
+    ),
+    "html"=>array(
+        "icon"=>"edit",
+        "sref"=>"html",
+        "name"=>"前端编辑"
     )
 );
 

@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local;
+use League\Flysystem\Plugin\ListPaths;
 class Welcome extends CI_Controller {
 
 	/**
@@ -122,18 +123,20 @@ class Welcome extends CI_Controller {
         $adapter = new Local(APPPATH);
         $filesystem = new Filesystem($adapter);
 
-//        $contents = $filesystem->listContents();
-//        foreach ($contents as $object) {
-//            echo $object['basename'].' is located at'.$object['path'].' and is a '.$object['type']."<br>";
-//        }
+        $contents = $filesystem->listContents("controllers",true);
+        foreach ($contents as $object) {
+            echo $object['basename'].' is located at'.$object['path'].' and is a '.$object['type']."<br>";
+        }
 
         //$contents = $filesystem->deleteDir('path/to/directory');
 
-        //var_dump($contents);
+        var_dump($contents);
         $a=array("dasd"=>"asd");
         $b="adssad";
         var_dump(empty($a["asdasd"]));
         var_dump(empty($b["asdasd"]));
+
+
     }
 
     function test4()

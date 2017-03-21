@@ -68,6 +68,10 @@ class Manage extends Authox_Controller
         ));
     }
 
+    /**
+     * 获取系统信息
+     * 需登录
+     */
     function system()
     {
         $db="mysql:host=".$this->db->hostname.";dbname=".$this->db->database;
@@ -115,6 +119,10 @@ class Manage extends Authox_Controller
         ));
     }
 
+    /**
+     * 获取处理器和内存的使用情况
+     * 需登录
+     */
     function dash()
     {
         function GetWMI($wmi, $strClass, $strValue = array())
@@ -170,5 +178,15 @@ class Manage extends Authox_Controller
             "message"=>"获取成功",
             "data"=>$dash
         ));
+    }
+
+    /**
+     * 前端可视化编辑界面
+     * 需登录
+     * 需带参数指定编辑的文件
+     */
+    function html()
+    {
+        $this->load->view("html/index.php");
     }
 }

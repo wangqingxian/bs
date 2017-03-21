@@ -18,6 +18,10 @@ class LogicMy extends CI_Controller
         $function=strtolower($function);
 
         $authorityData = $this->CI->session->userdata('authorityData');
+        if($authorityData===null)
+        {
+            return array('responseCode' => '999', 'responseMessage' => '没有权限');
+        }
         if(empty($authorityData))
         {
             return array('responseCode' => '100', 'responseMessage' => '没有权限');

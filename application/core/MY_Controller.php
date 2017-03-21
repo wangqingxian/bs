@@ -21,11 +21,11 @@ class Authox_Controller extends MY_Controller
     {
         parent::__construct();
 
-        $directory=substr($this->router->directory, 0, -1);
-        $controller = $this->router->class;
-        $function = $this->router->method;
+        $directory=strtolower(substr($this->router->directory, 0, -1));
+        $controller = strtolower($this->router->class);
+        $function = strtolower($this->router->method);
 
-        if($controller=="manage" && $directory!="api")
+        if($controller=="manage"&& $directory!="api")
         {
             if (!$this->session->userdata('user_name')&&$this->session->userdata("is_login")!="yes")
             {
@@ -46,6 +46,10 @@ class Authox_Controller extends MY_Controller
                 }
             }
         }
+        else if($controller=="html"&&$function="save")
+        {
+
+        }
         else if($controller==$this->router->default_controller)
         {
 
@@ -63,6 +67,13 @@ class Authox_Controller extends MY_Controller
                     if ($returnData['responseCode'] == '101')
                     {
 
+                    }
+                    else if ($returnData["responseCode"]=="999")
+                    {
+                        exit(json_encode(array(
+                            "status"=>false,
+                            "message"=>"登录超时，请重新登录。"
+                        )));
                     }
                     else if ($returnData['responseCode'] == '100')
                     {
@@ -92,6 +103,11 @@ class Authox_Controller extends MY_Controller
                     else if ($returnData['responseCode'] == '100')
                     {
                         show_error('你没有权限', 101, '-_-');
+                        exit();
+                    }
+                    else if ($returnData['responseCode'] == '999')
+                    {
+                        show_error('登陆超时', 101, '-_-');
                         exit();
                     }
                     else

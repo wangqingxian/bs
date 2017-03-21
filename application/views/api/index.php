@@ -10,7 +10,17 @@
     <div class="col-xs-12" style="margin-bottom: 15px;">
         <form class="form-inline">
             <div class="form-group">
+                <label>搜索:</label>
+                <select>
+                    <option value="">请选择所需搜索的字段</option>
+                </select>
+                <input type="text" class="form-control htran-radius" ng-model="searchdata"  />
+            </div>
+            <div class="form-group">
                 <label class="sr-only">按钮组</label>
+                <a class="btn btn-primary" ng-click="newsearch()" >查询</a>
+                <a class="btn btn-primary" ng-click="clear()" >清除条件</a>
+                <span style="margin-left: 30px;">
                 <a class="btn btn-success" ng-click="add()">添加</a>
                 <a class="btn btn-danger" ng-click="delete()" >删除</a>
                 <a class="btn btn-info" ng-click="modify()">修改</a>
