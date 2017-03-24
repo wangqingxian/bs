@@ -198,6 +198,8 @@ angular.module("appBase", [])
             select: [],
             like: {}
         }
+        $scope.searchData="";
+        $scope.searchField="";
         //获取数据
         $scope.getdata = function ()
         {
@@ -228,6 +230,24 @@ angular.module("appBase", [])
         }
         $scope.getdata();
 
+        $scope.newsearch=function ()
+        {
+            if($scope.searchField!=""&&$scope.searchData!="")
+            {
+                $scope.model.like[$scope.searchField]=$scope.searchData;
+                $scope.model.pageNum=1;
+                $scope.getdata();
+            }
+        }
+
+        $scope.clear=function ()
+        {
+            $scope.model.pageNum=1;
+            $scope.model.like={};
+            $scope.searchField="";
+            $scope.searchData="";
+            $scope.getdata();
+        }
         //换页
         $scope.changePage = function ()
         {
@@ -262,17 +282,25 @@ angular.module("appBase", [])
 
         $scope.add = function ()
         {
-            $state.go("module.api_add");
+            $state.go("module.api_add",{module:$stateParams.module});
         }
 
-        $scope.modify=function (item,show)
+        $scope.modify=function ()
         {
-            $state.go("module.api_modify",{module:item});
+            let modify=$scope.getselect();
+            if(modify.length==1)
+            {
+                $state.go("module.api_modify",{id:modify[0][$scope.module_mx["primary"]],module:$stateParams.module});
+            }
+            else
+            {
+                alert("一次只能对一条数据进行修改");
+            }
         }
 
         $scope.delete = function ()
         {
-            del=$scope.getselect();
+            let del=$scope.getselect();
             if (del.length =1)
             {
                 var modalInstance = $uibModal.open({
@@ -325,4 +353,59 @@ angular.module("appBase", [])
                     $scope.cancel();
                 });
         }
+    })
+
+    .controller("apiAdd",function ($scope,$http,$stateParams,$state)
+    {
+        $scope.config={};
+
+        //console.log($scope.module_mx); //resolve获取的模块信息
+        //console.log($scope.module);   //提前加载的模块api接口
+        $scope.apiAction=$scope.module.add;
+
+        $scope.show={};
+        $scope.addData={};
+
+        $scope.action=function ()
+        {
+            for(key in $scope.show)
+            {
+                switch ($scope.module_mx.keys[key].form)
+                {
+                    case "document":
+                        //data:{document:"",file:""}  document->html file->修改时传文件名
+                        $.ajax({
+                            url:"manage/document",
+                            method:"post",
+                            data:{document:$scope.show[key]},
+                            success:function (result)
+                            {
+                                result=JSON.parse(result);
+                                if(result.status)
+                                {
+                                    $scope.addData[key]=result.data;
+                                }
+                            },
+                            async: false
+                        });
+                        break;
+                    default :
+                        $scope.addData[key]=$scope.show[key]
+
+                }
+            }
+            $http.post($scope.apiAction,$scope.addData)
+                .success(function (result)
+                {
+                    if(result.status)
+                    {
+                        $state.go("module.api",$stateParams,{reload:true});
+                    }
+                    else
+                    {
+                        alert(result.message);
+                    }
+                })
+        }
+
     })

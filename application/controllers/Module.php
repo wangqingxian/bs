@@ -1404,25 +1404,112 @@ class Module extends Authox_Controller
      * 生成数据源管理的添加数据form页面
      * 未加入
      * 未完成
-     * module/api_form/:ctrl
-     * 第三段是angularjs的控制器
+     * module/api_form/:ctrl/:module_id/:item_id
+     * 第三段是表单动作 apiAdd或apiModify 同时也是angularjs的控制器
+     * 第四段是module_id是在ac_module表中的ID
+     * 第五段是item_id是表中所需要编辑的数据行的ID 在apiModify时才有意义
      */
     public function api_form()
     {
 $temp=<<<html
 <div class="row">
     <div class="col-xs-12" style="min-height: 500px;">
-        <p>参数错误</p>
+        <p>模块不存在或参数错误</p>
     </div>
 </div>
 html;
+$error=<<<html
+<div class="row"> 
+    <div class="col-xs-12" style="min-height: 500px;">
+        <p>该模块缺少配置文件</p>
+    </div>
+</div>
+html;
+
         $ctrl=$this->uri->segment(3);
+
         if(empty($ctrl))
         {
             exit($temp);
         }
+
+        if($ctrl=="apiAdd")
+        {
+            $this->_form_add($temp,$error);
+        }
+        else if($ctrl=="apiModify")
+        {
+            $this->_form_modify($temp,$error);
+        }
+        else
+        {
+            exit($temp);
+        }
+
         //TODO:未完成
     }
+
+    private function _form_add($temp,$error)
+    {
+        $module_id=$this->uri->segment(4);
+        if(empty($module_id))
+        {
+            exit($temp);
+        }
+        if($module=$this->_model->detail(array("module_id"=>$module_id)))
+        {
+            if (empty($module["data"]))
+            {
+                exit($temp);
+            }
+            else
+            {
+                $module = $module["data"];
+            }
+            $model_base="models/base/".strtolower($module["module"])."_model/";
+            $model="models/".strtolower($module["module"])."_model.php";
+            $controller="controllers/api/".strtolower($module["module"]).".php";
+
+            if($this->file->has($model_base."name.json")
+                &&$this->file->has($model_base."entity.json")
+                &&$this->file->has($model_base."table.json")
+                &&$this->file->has($model)
+                &&$this->file->has($controller)
+                &&$this->db->table_exists(DB_TABLE_PRE.strtolower($module["module"]))
+            )
+            {
+                $name=$this->file->read($model_base."name.json");
+                $name=json_decode($name,true);
+                $table=$this->file->read($model_base."table.json");
+                $table=json_decode($table,true);
+
+                $data=array(
+                    "module"=>$module,
+                    "name"=>$name,
+                    "table"=>$table,
+                    "controller"=>"apiAdd",
+                    "form_title"=>$module["module_name"]."模块 ".$module["module"]."表 数据添加"
+                );
+
+                $this->load->view("api/form.php",$data);
+            }
+            else
+            {
+                exit($error);
+            }
+        }
+        else
+        {
+            exit($temp);
+        }
+    }
+
+    private function _form_modify($temp,$error)
+    {
+        $module_id=$this->uri->segment(4);
+        $item_id=$this->uri->segment(5);
+    }
+
 
     /**
      * 模块数据源管理

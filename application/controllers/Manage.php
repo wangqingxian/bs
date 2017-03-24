@@ -6,6 +6,8 @@
  * Time: 14:07
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
 
 class Manage extends Authox_Controller
 {
@@ -189,4 +191,47 @@ class Manage extends Authox_Controller
     {
         $this->load->view("html/index.php");
     }
+
+    function upload()
+    {
+
+    }
+
+    function document()
+    {
+        $input=$this->input->post();
+
+        if(!is_array($input)||empty($input))
+        {
+            exit(json_encode(array(
+                "status"=>false,
+                "message"=>"参数错误"
+            )));
+        }
+
+        $document=array_key_exists("document",$input)?$input["document"]:"";
+        $file=array_key_exists("file",$input)?$input["file"]:"";
+        if(empty($document))
+        {
+            exit(json_encode(array(
+                "status"=>false,
+                "message"=>"参数错误"
+            )));
+        }
+
+        $adapter = new Local(FCPATH);
+        $filesystem = new Filesystem($adapter);
+        $path="upload/".date("Ymd")."/";
+        if(empty($file))
+            $file=$this->session->userdata("user_name").time() . rand( 1 , 10000 ).".html";
+
+        $filesystem->put($path.$file,$document);
+
+        echo json_encode(array(
+           "status"=>true,
+            "message"=>"生成成功",
+            "data"=>$path.$file
+        ));
+    }
+
 }

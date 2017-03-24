@@ -29,6 +29,16 @@
                         <td><button ng-click="edit_class()" class="btn btn-info">修改class</button></td>
                     </tr>
                     <tr>
+                        <td><button ng-click="edit_sort('start')" ng-if="!edit.sort"  class="btn btn-info">开启内部排序</button>
+                            <button ng-click="edit_sort('stop')" ng-if="edit.sort" class="btn btn-info">关闭内部排序</button>
+                        </td>
+                        <td>
+                            <button ng-click="edit_drag('start')" ng-if="!edit.drag"  class="btn btn-info">开启元素拖拽</button>
+                            <button ng-click="edit_drag('stop')" ng-if="edit.drag" class="btn btn-info">关闭元素拖拽</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><button ng-click="edit_remove()" class="btn btn-info">删除当前元素</button></td>
                         <td><button ng-click="edit_save()" class="btn btn-info">保存模版</button></td>
                     </tr>
                 </table>

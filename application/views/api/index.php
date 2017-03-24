@@ -1,8 +1,16 @@
+<style>
+    .table >tbody>tr>th,
+    .table >tbody>tr>td{
+        word-wrap:break-word;
+    }
+</style>
 <div class="row" ng-controller="apiController">
+<!--    <p>apiController是在appBaseController.js里</p>-->
     <div class="col-xs-12">
         <p style="font-size: 15px;font-weight: 600;">
         <?php if (isset($module)): ?>
-            <?=$module["module"]?>模块
+            <?=$module["module_name"]?>模块&nbsp;
+            <?=$module["module"]?>表
         <?php endif; ?>
         数据源管理
         </p>
@@ -11,10 +19,17 @@
         <form class="form-inline">
             <div class="form-group">
                 <label>搜索:</label>
-                <select>
+                <select class="form-control" ng-model="searchField">
                     <option value="">请选择所需搜索的字段</option>
+                    <?php foreach ($table["keys"] as $item): ?>
+                        <option value="<?=$item["key"]?>"><?=$item["key_name"]?></option>
+                    <?php endforeach; ?>
                 </select>
-                <input type="text" class="form-control htran-radius" ng-model="searchdata"  />
+
+            </div>
+            <div class="form-group">
+                <label class="sr-only">搜索框</label>
+                <input type="text" class="form-control htran-radius" ng-model="searchData"  />
             </div>
             <div class="form-group">
                 <label class="sr-only">按钮组</label>
@@ -26,34 +41,48 @@
                 <a class="btn btn-info" ng-click="modify()">修改</a>
             </div>
             <div class="form-group pull-right">
+                <a class="btn btn-default" ng-click="getdata()">刷新</a>
                 <a class="btn btn-default" ng-click="back()">返回</a>
             </div>
         </form>
     </div>
     <div class="col-xs-12">
-        <table class="table table-hover table-striped" style="margin-bottom: 0px;">
-            <tbody>
-            <tr ng-click="checkAll(allChecked,show)">
-                <th style="width: 50px;">
-                    <input type="checkbox" ng-checked="allChecked"
-                           ng-click="checkAll(allChecked,show,$event)">
-                </th>
-                <?php if(isset($name)&&isset($table)) foreach ($name as $key=>$value): ?>
-                    <th><?=$value?></th>
-                <?php endforeach; ?>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" style="margin-bottom: 0px;">
+                <tbody>
+                <tr ng-click="checkAll(allChecked,show)">
+                    <th style="width: 50px;">
+                        <input type="checkbox" ng-checked="allChecked"
+                               ng-click="checkAll(allChecked,show,$event)">
+                    </th>
+                    <?php if (isset($name)&&isset($table)): ?>
+                        <th style="max-width: 150px;min-width: 50px;"><?=$name[$table["primary"]]?></th>
+                    <?php endif; ?>
+                    <?php if(isset($name)&&isset($table)) foreach ($name as $key=>$value): ?>
+                        <?php if ($key!=$table['primary']): ?>
+                            <th style="min-width: 50px;max-width: 150px;"><?=$value?></th>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
 
-            </tr>
-            <tr ng-repeat="item in show " ng-click="checkSingle(item,show)">
-                <td>
-                    <input type="checkbox" ng-checked="item.checked"
-                           ng-click="checkSingle(item,show,$event)">
-                </td>
-                <?php if(isset($name)&&isset($table)) foreach ($name as $key=>$value): ?>
-                    <td>{{item.<?=$key?>}}</td>
-                <?php endforeach; ?>
-            </tr>
-            </tbody>
-        </table>
+                </tr>
+                <tr ng-repeat="item in show " ng-click="checkSingle(item,show)">
+                    <td>
+                        <input type="checkbox" ng-checked="item.checked"
+                               ng-click="checkSingle(item,show,$event)">
+                    </td>
+                    <?php if (isset($name)&&isset($table)): ?>
+                        <td>{{item.<?=$table["primary"]?>}}</td>
+                    <?php endif; ?>
+                    <?php if(isset($name)&&isset($table)) foreach ($name as $key=>$value): ?>
+                        <?php if ($key!=$table["primary"]): ?>
+                            <td >{{item.<?=$key?>}}</td>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
         <uib-pagination total-items="dataSize" ng-model="model.pageNum"
                         boundary-link-numbers="true"
                         class="pagination-sm"	boundary-links="true"

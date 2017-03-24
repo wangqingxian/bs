@@ -32,9 +32,7 @@ app.controller("rootController",function (
     $document,$window,$sce,$log,$compile,$filter,uuid2,$parse,lodash,$editAction)
 {
     $scope.select={};
-    $scope.show={
-        sad:['']
-    };
+    $scope.show={};
     $scope.select["background-repeat"]=[
         "repeat",
         "repeat-x",
@@ -196,6 +194,8 @@ app.controller("rootController",function (
     //$scope.edit用于保存当前编辑的元素的信息
     $scope.edit={
         button:"",
+        sort:false,
+        drag:false
     };
     const edit_box=$("#edit");
 
@@ -212,7 +212,8 @@ app.controller("rootController",function (
         $scope.edit.tagName=select[0].tagName;
         $scope.edit.name=select.attr("name");
         $scope.edit.id=select.attr("id");
-
+        $scope.edit.sort=false;
+        $scope.edit.drag=false;
     }
     $scope.getCss=function (select)
     {
@@ -312,42 +313,19 @@ app.controller("rootController",function (
 
     $scope.getInfo($("#container"));
     $scope.getCss($("#container"));
+
     $scope.item_select=function (item)
     {
-        if($scope.edit.item.attr("id")!="container")
-        {
-            $scope.edit.item.parent().sortable("destroy");
-        }
+        //更换选定元素是清除排序拖拽
+        if($scope.edit.drag)
+            $scope.edit_drag("stop");
+        if($scope.edit.sort)
+            $scope.edit_sort("stop");
         let select=angular.element(item.target).parent();
-        let sort=angular.element(item.target).parent().parent();
         $scope.getInfo(select);
 
         $scope.state="index";
 
-        select.on("dragstart",function (ev)
-        {
-            ev.dataTransfer.setData("ID",ev.target.id);
-        })
-
-
-        sort.sortable({
-            handle:".edit-button-4",
-            stop:function (event,ui)
-            {
-                console.log(ui.item);
-                console.log(ui.item.prev());
-                let edit_now=edit_box.find("#"+ui.item.attr("id"));
-                if(ui.item.prev().length==0)
-                {
-                    edit_box.find("#"+ui.item.parent().attr("id")).prepend(edit_now.prop("outerHTML"));
-                }
-                else
-                {
-                    edit_box.find("#"+ui.item.prev().attr("id")).after(edit_now.prop("outerHTML"));
-                }
-                edit_now.remove();
-            }
-        });
     }
     $scope.item_remove=function (item)
     {
@@ -355,8 +333,89 @@ app.controller("rootController",function (
 
         if(window.confirm("确定要删除ID="+select.attr("id")+"的元素么\n删除后无法恢复"))
         {
-            edit_box.find(select.attr("id")).remove();
+            edit_box.find("#"+select.attr("id")).remove();
+            if(select.attr("id")==$scope.edit.item.attr("id"))
+            {
+                $scope.getInfo($("#container"));
+                $scope.edit.state="index";
+            }
             select.remove();
+        }
+    }
+
+    $scope.edit_remove=function()
+    {
+        if($scope.edit.item.attr("id")=="container")
+        {
+            alert("container作为容器无法删除")
+        }
+        else
+        {
+            if(window.confirm("确定要删除ID="+$scope.edit.item.attr("id")+"的元素么\n删除后无法恢复"))
+            {
+                edit_box.find("#"+$scope.edit.item.attr("id")).remove();
+                $scope.edit.item.remove();
+                $scope.getInfo($("#container"));
+                $scope.edit.state="index";
+            }
+        }
+
+    }
+    $scope.edit_sort=function (is_start)
+    {
+        if(is_start=="start")
+        {
+            $scope.edit.sort=true;
+            $scope.edit.item.sortable({
+                handle:".edit-button-4",
+                stop:function (event,ui)
+                {
+                    console.log(ui.item);
+                    console.log(ui.item.prev());
+                    let edit_now=edit_box.find("#"+ui.item.attr("id"));
+                    if(ui.item.prev().length==0)
+                    {
+                        edit_box.find("#"+ui.item.parent().attr("id")).prepend(edit_now.prop("outerHTML"));
+                    }
+                    else
+                    {
+                        edit_box.find("#"+ui.item.prev().attr("id")).after(edit_now.prop("outerHTML"));
+                    }
+                    edit_now.remove();
+                }
+            });
+        }
+        else if(is_start=="stop")
+        {
+            $scope.edit.sort=false;
+            $scope.edit.item.sortable("destroy");
+        }
+    }
+
+    $scope.edit_drag=function (is_start)
+    {
+        if(is_start=="start")
+        {
+            if($scope.edit.item.attr("id")=="container")
+            {
+                alert("container作为容器无法拖拽")
+            }
+            else
+            {
+                $scope.edit.drag=true;
+                $scope.edit.item.attr("draggable",true);
+                $scope.edit.item.on("dragstart",function (ev)
+                {
+                    ev.originalEvent.dataTransfer.setData("ID",ev.target.id);
+                })
+            }
+
+        }
+        else if(is_start=="stop")
+        {
+            $scope.edit.drag=false;
+            $scope.edit.item.attr("draggable",false);
+            $scope.edit.item.off("dragstart");
         }
     }
 
@@ -387,6 +446,7 @@ app.controller("rootController",function (
         $scope.getCss($scope.edit.item);
         $scope.state="index";
     }
+
     //确定修改class
     $scope.class_sure=function ()
     {
@@ -453,7 +513,7 @@ app.directive("acEdit",function ($compile, $parse,uuid2)
                     elem.css("margin-top","20px");
                     let edit=`<button ng-click="item_select($event)" class="btn btn-default btn-xs edit-button-1">选中</button>`;
                     edit+=`<button ng-click="item_remove($event)"   class="btn btn-danger btn-xs edit-button-2">删除</button>`;
-                    edit+=`<button ng-click="item_select($event)"  class="btn btn-primary btn-xs edit-button-3">移动</button>`;
+                    edit+=`<a  class="btn btn-primary btn-xs edit-button-3">移动</a>`;
                     edit+=`<a  class="btn btn-info btn-xs edit-button-4">排序</a>`;
                     let t=$compile(edit)(scope);
                     elem.append(t);
@@ -474,25 +534,45 @@ app.directive("acEdit",function ($compile, $parse,uuid2)
             //TODO 未完成
             elem.on("dragenter",function (ev)
             {
-                console.log(ev)
-                let ele=angular.element(ev.target)
-                ele.on("dragover",function (ev)
+                if(scope.edit.drag)
                 {
-                    ev.preventDefault();
-                })
-                ele.on("drop",function (ev)
-                {
-                    ev.preventDefault();
-                    let data=ev.dataTransfer.getData("ID");
-                    ev.target.appendChild($("#edit").find("#"+data).prop("outerHTML"));
-                })
-                elem.on("dragleave",function (ev)
-                {
-                    console.log(ev)
-                    angular.element(ev.target).off("dragover");
-                    angular.element(ev.target).off("drop");
-                    angular.element(ev.target).off("dragleave");
-                })
+                    let ele=angular.element(ev.target)
+                    ele.on("dragover",function (ev)
+                    {
+                        ev.preventDefault();
+                    })
+                    ele.on("drop",function (ev)
+                    {
+                        if(scope.edit.drag)
+                        {
+                            ev.preventDefault();
+                            let data=ev.originalEvent.dataTransfer.getData("ID");
+                            let event=ev.originalEvent;
+                            //TODO： 未完成 有报错
+                            let temp=$('#'+data).prop("outerHTML");
+                            temp=$compile(temp)(scope);
+                            $("#"+data).remove();
+                            angular.element(ev.target).append(temp);
+                            let edit_box=$("#edit");
+                            let move=edit_box.find("#"+data);
+                            let mt=move.prop("outerHTML");
+                            move.remove();
+                            edit_box.find("#"+ev.target.id).append(mt);
+                            scope.edit.item=$(temp);
+                            scope.getInfo(scope.edit.item);
+                            scope.edit_drag("stop");
+                            scope.$apply();
+
+                        }
+                        //#edit中保存变化
+                    })
+                    elem.on("dragleave",function (ev)
+                    {
+                        angular.element(ev.target).off("dragover");
+                        angular.element(ev.target).off("drop");
+                        angular.element(ev.target).off("dragleave");
+                    })
+                }
             })
 
 

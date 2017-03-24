@@ -161,18 +161,50 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                     templateUrl:"admin/partial/module/check.html"
                 })
                 .state("module.api_add",{
-                    url:"/api/add",
+                    url:"/api/add/:module",
+                    resolve:{
+                        moduleApi:function ($http,$stateParams)
+                        {
+                            return $http.post("module/info",{module_id:$stateParams.module})
+                        }
+                    },
+                    controller:function ($scope,moduleApi,$stateParams,$state)
+                    {
+                        if($stateParams.hasOwnProperty('module'))
+                        {
+                            $scope.module_mx=moduleApi.data.data;
+                            $scope.module={
+                                add:"",
+                                delete:"",
+                                page:"",
+                                modify:""
+                            };
+                            $scope.module.add="api/"+angular.lowercase($scope.module_mx["module"])+"/add";
+                            $scope.module.delete="api/"+angular.lowercase($scope.module_mx["module"])+"/delete";
+                            $scope.module.page="api/"+angular.lowercase($scope.module_mx["module"])+"/page";
+                            $scope.module.modify="api/"+angular.lowercase($scope.module_mx["module"])+"/modify";
+                        }
+                        else
+                        {
+                            $state.go("module.manage",{},{reload:true});
+                        }
+                    },
                     templateUrl:function ($stateParams)
                     {
-                        return "module/api_form/apiAdd"
+                        if($stateParams.hasOwnProperty('module'))
+                            return "module/api_form/apiAdd/"+$stateParams.module;
+                        else
+                            return "module/api_form/apiAdd/"
                     }
                 })
                 .state("module.api_modify",{
-                    url:"/api/modify",
-                    params:{module:null},
+                    url:"/api/modify/:module/:primaryKey",
                     templateUrl:function ($stateParams)
                     {
-                        return "module/api_form/apiModify"
+                        if($stateParams.hasOwnProperty("module")&&$stateParams.hasOwnProperty("primaryKey"))
+                            return "module/api_form/apiModify/"+$stateParams.module+"/"+$stateParams.primaryKey+"/";
+                        else
+                            return "module/api_form/apiModify/";
                     }
                 })
                 .state("module.api",{
@@ -187,17 +219,17 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                     {
                         if($stateParams.hasOwnProperty('module'))
                         {
-                            mx=moduleApi.data.data;
+                            $scope.module_mx=moduleApi.data.data;
                             $scope.module={
                                 add:"",
                                 delete:"",
                                 page:"",
                                 modify:""
                             };
-                            $scope.module.add="api/"+angular.lowercase(mx["module"])+"/add";
-                            $scope.module.delete="api/"+angular.lowercase(mx["module"])+"/delete";
-                            $scope.module.page="api/"+angular.lowercase(mx["module"])+"/page";
-                            $scope.module.modify="api/"+angular.lowercase(mx["module"])+"/modify";
+                            $scope.module.add="api/"+angular.lowercase($scope.module_mx["module"])+"/add";
+                            $scope.module.delete="api/"+angular.lowercase($scope.module_mx["module"])+"/delete";
+                            $scope.module.page="api/"+angular.lowercase($scope.module_mx["module"])+"/page";
+                            $scope.module.modify="api/"+angular.lowercase($scope.module_mx["module"])+"/modify";
                         }
                         else
                         {
@@ -206,7 +238,10 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                     },
                     templateUrl:function ($stateParams)
                     {
-                        return "module/api/"+$stateParams.module;
+                        if($stateParams.hasOwnProperty('module'))
+                            return "module/api/"+$stateParams.module;
+                        else
+                            return "module/api/"
                     },
                 })
                 .state("html",{
@@ -230,7 +265,7 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                     // templateUrl:function ($stateParams) {
                     //     return "welcome/test6/"+$stateParams.id;
                     // }
-                    templateUrl:"admin/partial/module/test.html",
+                    templateUrl:"admin/script/error/test.html",
                 })
                 .state("other",{//TODO：测试
                     url:"/other",
@@ -294,7 +329,4 @@ app.controller("loginCtrl",function ($scope,$http)
                 }
             })
     }
-})
-app.controller('controller', function ($scope) {
-    $scope.config = {};
 })
