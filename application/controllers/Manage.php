@@ -194,7 +194,38 @@ class Manage extends Authox_Controller
 
     function upload()
     {
+        $adapter = new Local(FCPATH);
+        $filesystem = new Filesystem($adapter);
+        $path="upload/".date("Ymd")."/";
+        if(!$filesystem->has($path))
+        {
+            $filesystem->createDir($path);
+        }
 
+        $config['upload_path']      = "./upload/".date("Ymd")."/";
+        $config["allowed_types"] ="*";
+        $config['max_size']     = 1024*50;
+        $config["encrypt_name"]=true;
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('file'))
+        {
+            $error = $this->upload->display_errors();
+            echo json_encode(array(
+                "status"=>false,
+                "message"=>$error
+            ));
+        }
+        else
+        {
+            $data = $this->upload->data();
+
+            $filepath="upload/".$data["file_name"];
+            echo json_encode(array(
+                "status"=>true,
+                "data"=>$filepath
+            ));
+        }
     }
 
     function document()
@@ -221,9 +252,17 @@ class Manage extends Authox_Controller
 
         $adapter = new Local(FCPATH);
         $filesystem = new Filesystem($adapter);
-        $path="upload/".date("Ymd")."/";
+
         if(empty($file))
+        {
+            $path="upload/".date("Ymd")."/";
             $file=$this->session->userdata("user_name").time() . rand( 1 , 10000 ).".html";
+        }
+        else
+        {
+            $path="";
+        }
+
 
         $filesystem->put($path.$file,$document);
 
@@ -234,4 +273,48 @@ class Manage extends Authox_Controller
         ));
     }
 
+    function getdoc()
+    {
+        $input=$this->input->post();
+
+        if(!is_array($input)||empty($input))
+        {
+            exit(json_encode(array(
+                "status"=>false,
+                "message"=>"参数错误"
+            )));
+        }
+
+        $file=array_key_exists("file",$input)?$input["file"]:"";
+        if(empty($file))
+        {
+            exit(json_encode(array(
+                "status"=>false,
+                "message"=>"参数错误"
+            )));
+        }
+
+        $adapter = new Local(FCPATH);
+        $filesystem = new Filesystem($adapter);
+
+        if($filesystem->has($file))
+        {
+            $content=$filesystem->read($file);
+            echo json_encode(array(
+                "status"=>true,
+                "message"=>"获取成功",
+                "data"=>$content
+            ));
+        }
+        else
+        {
+            echo json_encode(array(
+                "status"=>false,
+                "message"=>"获取失败",
+            ));
+        }
+
+
+
+    }
 }

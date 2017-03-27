@@ -1,7 +1,8 @@
 <style>
-    .table >tbody>tr>th,
-    .table >tbody>tr>td{
-        word-wrap:break-word;
+    .table>tbody>tr>td,
+    .table>tbody>tr>th{
+        vertical-align: middle;
+        word-break: normal;
     }
 </style>
 <div class="row" ng-controller="apiController">
@@ -47,8 +48,8 @@
         </form>
     </div>
     <div class="col-xs-12">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped" style="margin-bottom: 0px;">
+        <div class="table-responsive" style="overflow-y: auto;height: 400px;margin-bottom: 15px;">
+            <table class="table table-hover table-striped" >
                 <tbody>
                 <tr ng-click="checkAll(allChecked,show)">
                     <th style="width: 50px;">
@@ -56,11 +57,17 @@
                                ng-click="checkAll(allChecked,show,$event)">
                     </th>
                     <?php if (isset($name)&&isset($table)): ?>
-                        <th style="max-width: 150px;min-width: 50px;"><?=$name[$table["primary"]]?></th>
+                        <th >
+                            <div style="max-width: 150px;min-width: 50px;overflow: auto;"><?=$name[$table["primary"]]?></div>
+                        </th>
                     <?php endif; ?>
                     <?php if(isset($name)&&isset($table)) foreach ($name as $key=>$value): ?>
                         <?php if ($key!=$table['primary']): ?>
-                            <th style="min-width: 50px;max-width: 150px;"><?=$value?></th>
+                            <th >
+                                <div style="min-width: 50px;max-width: 150px;overflow: auto;" >
+                                    <?=$value?>
+                                </div>
+                            </th>
                         <?php endif; ?>
                     <?php endforeach; ?>
 
@@ -71,11 +78,13 @@
                                ng-click="checkSingle(item,show,$event)">
                     </td>
                     <?php if (isset($name)&&isset($table)): ?>
-                        <td>{{item.<?=$table["primary"]?>}}</td>
+                        <td ><div style="min-width: 50px;">{{item.<?=$table["primary"]?>}}</div></td>
                     <?php endif; ?>
                     <?php if(isset($name)&&isset($table)) foreach ($name as $key=>$value): ?>
                         <?php if ($key!=$table["primary"]): ?>
-                            <td >{{item.<?=$key?>}}</td>
+                            <td >
+                                <div style="max-width: 350px;max-height: 60px;overflow: auto;">{{item.<?=$key?>}}</div>
+                            </td>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </tr>

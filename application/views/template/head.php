@@ -34,6 +34,7 @@
         <script src="<?=NPM?>angular-i18n/angular-locale_zh.js"></script>
         <script src="<?=NPM?>ng-echarts/dist/ng-echarts.min.js"></script>
         <script src="<?=BOWER?>meta.umeditor/src/meta.umeditor.js"></script>
+        <script src="<?=NPM?>ng-file-upload/dist/ng-file-upload-all.js"></script>
     <?php endif; ?>
     <!--angular控制器等-->
     <?php if ($ac_page=="login"): ?>

@@ -290,7 +290,9 @@ angular.module("appBase", [])
             let modify=$scope.getselect();
             if(modify.length==1)
             {
-                $state.go("module.api_modify",{id:modify[0][$scope.module_mx["primary"]],module:$stateParams.module});
+                $state.go("module.api_modify",
+                    {primaryKey:modify[0][$scope.module_mx["primary"]],module:$stateParams.module},
+                    {reload:true});
             }
             else
             {
@@ -301,7 +303,7 @@ angular.module("appBase", [])
         $scope.delete = function ()
         {
             let del=$scope.getselect();
-            if (del.length =1)
+            if (del.length >0)
             {
                 var modalInstance = $uibModal.open({
                     templateUrl: "admin/partial/user/delete.html",
@@ -355,19 +357,77 @@ angular.module("appBase", [])
         }
     })
 
-    .controller("apiAdd",function ($scope,$http,$stateParams,$state)
+    .controller("apiAdd",function ($scope,$http,$stateParams,$state,$filter,Upload)
     {
+        $scope.uploading={
+            display: "none"
+        };
         $scope.config={};
-
+        $scope.dateOptions = {
+            formatYear: 'yyyy',
+            startingDay: 0  //一个星期从周几开始
+        };
         //console.log($scope.module_mx); //resolve获取的模块信息
         //console.log($scope.module);   //提前加载的模块api接口
         $scope.apiAction=$scope.module.add;
-
+        $scope.TimeOpened={};
         $scope.show={};
         $scope.addData={};
+        $scope.flag=true;
+        $scope.error="";
+
+        $scope.openTime=function ($event,model)
+        {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.TimeOpened[model] = true;
+
+        }
+
+        $scope.fileChanged=function (ele,model)
+        {
+            $scope.show[model]= ele.files[0];
+            $scope.$apply();
+        }
+
+        $scope.timeChange=function (select,ctrl,model)
+        {
+            if(typeof ($scope.show[model])==="undefined")
+            {
+                $scope.show[model]=new Date();
+            }
+            else
+            {
+                $scope.show[model]=new Date($scope.show[model])
+            }
+            if(select=='hour')
+            {
+                if(ctrl=="+")
+                    $scope.show[model]=$scope.show[model].getTime()+3600*1000;
+                else
+                    $scope.show[model]=$scope.show[model].getTime()-3600*1000;
+            }
+            else if(select=='minute')
+            {
+                if(ctrl=="+")
+                    $scope.show[model]=$scope.show[model].getTime()+60*1000;
+                else
+                    $scope.show[model]=$scope.show[model].getTime()-60*1000;
+            }
+            else if(select=='second')
+            {
+                if(ctrl=="+")
+                    $scope.show[model]=$scope.show[model].getTime()+1000;
+                else
+                    $scope.show[model]=$scope.show[model].getTime()-1000;
+            }
+        }
 
         $scope.action=function ()
         {
+            $scope.uploading.display="block";
+
+            $scope.flag=true;
             for(key in $scope.show)
             {
                 switch ($scope.module_mx.keys[key].form)
@@ -386,17 +446,274 @@ angular.module("appBase", [])
                                     $scope.addData[key]=result.data;
                                 }
                             },
+                            error:function (error)
+                            {
+                                $scope.flag=false;
+                                $scope.error+=error;
+                            },
                             async: false
                         });
                         break;
+                    case "datetime":
+                        $scope.addData[key]=$filter('date')($scope.show[key],"yyyy-MM-dd HH:mm:ss");
+                        break;
+                    case "upload":
+                        let formData = new FormData();
+                        if(typeof ($scope.show[key])!="undefined")
+                        {
+                            formData.append("file",$scope.show[key]);
+                            $.ajax({
+                                type: "POST",
+                                data: formData,
+                                url: "manage/upload",
+                                contentType: false,
+                                processData: false,
+                                async:false,
+                                success: function (data) {
+                                    let result=JSON.parse(data);
+                                    $scope.addData[key]=result.data;
+                                },
+                                error: function (data) {
+                                    console.log(data);
+                                }
+                            });
+                        }
+                        break;
+                    case "number":
+                        $scope.addData[key]=parseInt($scope.show[key]);
+                        break;
                     default :
-                        $scope.addData[key]=$scope.show[key]
-
+                        $scope.addData[key]=$scope.show[key];
                 }
             }
+            console.log("data",$scope.addData);
             $http.post($scope.apiAction,$scope.addData)
                 .success(function (result)
                 {
+                    $scope.uploading.display="none";
+                    if(result.status)
+                    {
+                        $state.go("module.api",$stateParams,{reload:true});
+                    }
+                    else
+                    {
+                        alert(result.message);
+                    }
+                })
+        }
+
+    })
+
+    .controller("apiModify",function ($scope,$http,$stateParams,$state,$filter,Upload)
+    {
+        $scope.show={};
+        $scope.modifyData={};
+        let data={};
+        data[$scope.module_mx["primary"]]=$stateParams.primaryKey;
+        $.ajax({
+            method:"post",
+            async:false,
+            url:$scope.module.detail,
+            data:data,
+            success:function (result)
+            {
+                result=JSON.parse(result);
+                if(result.status)
+                {
+                    $scope.modifyData=result.data;
+
+                    for(key in $scope.modifyData)
+                    {
+                        switch ($scope.module_mx.keys[key].form)
+                        {
+                            case "document":
+                                //data:{document:"",file:""}  document->html file->修改时传文件名
+                                $.ajax({
+                                    url:"manage/getdoc",
+                                    method:"post",
+                                    data:{file:$scope.modifyData[key]},
+                                    success:function (result)
+                                    {
+                                        result=JSON.parse(result);
+                                        if(result.status)
+                                        {
+                                            $scope.show[key]=result.data;
+                                            console.log($scope.show);
+                                        }
+                                        else
+                                        {
+                                            $scope.show[key]="";
+                                        }
+                                    },
+                                    error:function (error)
+                                    {
+                                        console.log(error)
+                                    },
+                                    async: false
+                                });
+                                console.log($scope.show);
+                                break;
+                            case "datetime":
+                                $scope.show[key]=new Date($scope.modifyData[key]);
+                                break;
+                            case "upload":
+                                $scope.show[key]=undefined;
+                                break;
+                            case "number":
+                                $scope.show[key]=parseInt($scope.modifyData[key]);
+                                break;
+                            case "tinyint":
+                                $scope.show[key]=($scope.modifyData==1);
+                                break;
+                            case "double":
+                                $scope.show[key]=parseFloat($scope.modifyData[key]);
+                                break;
+                            default :
+                                $scope.show[key]=$scope.modifyData[key];
+                        }
+                    }
+                }
+            }
+        })
+
+        $scope.uploading={
+            display: "none"
+        };
+        $scope.config={};
+        $scope.dateOptions = {
+            formatYear: 'yyyy',
+            startingDay: 0  //一个星期从周几开始
+        };
+        //console.log($scope.module_mx); //resolve获取的模块信息
+        //console.log($scope.module);   //提前加载的模块api接口
+        $scope.apiAction=$scope.module.modify;
+        $scope.TimeOpened={};
+
+        $scope.flag=true;
+        $scope.error="";
+
+        $scope.openTime=function ($event,model)
+        {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.TimeOpened[model] = true;
+
+        }
+
+        $scope.fileChanged=function (ele,model)
+        {
+            $scope.show[model]= ele.files[0];
+            $scope.$apply();
+        }
+
+        $scope.timeChange=function (select,ctrl,model)
+        {
+            if(typeof ($scope.show[model])==="undefined")
+            {
+                $scope.show[model]=new Date();
+            }
+            else
+            {
+                $scope.show[model]=new Date($scope.show[model])
+            }
+            if(select=='hour')
+            {
+                if(ctrl=="+")
+                    $scope.show[model]=$scope.show[model].getTime()+3600*1000;
+                else
+                    $scope.show[model]=$scope.show[model].getTime()-3600*1000;
+            }
+            else if(select=='minute')
+            {
+                if(ctrl=="+")
+                    $scope.show[model]=$scope.show[model].getTime()+60*1000;
+                else
+                    $scope.show[model]=$scope.show[model].getTime()-60*1000;
+            }
+            else if(select=='second')
+            {
+                if(ctrl=="+")
+                    $scope.show[model]=$scope.show[model].getTime()+1000;
+                else
+                    $scope.show[model]=$scope.show[model].getTime()-1000;
+            }
+        }
+
+        $scope.action=function ()
+        {
+            $scope.uploading.display="block";
+
+            $scope.flag=true;
+            for(key in $scope.show)
+            {
+                switch ($scope.module_mx.keys[key].form)
+                {
+                    case "document":
+                        //data:{document:"",file:""}  document->html file->修改时传文件名
+                        $.ajax({
+                            url:"manage/document",
+                            method:"post",
+                            data:{document:$scope.show[key],file:$scope.modifyData[key]},
+                            success:function (result)
+                            {
+                                result=JSON.parse(result);
+                                if(result.status)
+                                {
+                                    $scope.modifyData[key]=result.data;
+                                }
+                            },
+                            error:function (error)
+                            {
+                                $scope.flag=false;
+                                $scope.error+=error;
+                            },
+                            async: false
+                        });
+                        break;
+                    case "datetime":
+                        $scope.modifyData[key]=$filter('date')($scope.show[key],"yyyy-MM-dd HH:mm:ss");
+                        break;
+                    case "upload":
+                        let formData = new FormData();
+                        //undefined 不修改
+                        //"" 删除文件
+                        //object 更换文件
+                        if(typeof ($scope.show[key])!="undefined"&&$scope.show[key]!=="")
+                        {
+                            formData.append("file",$scope.show[key]);
+                            $.ajax({
+                                type: "POST",
+                                data: formData,
+                                url: "manage/upload",
+                                contentType: false,
+                                processData: false,
+                                async:false,
+                                success: function (data) {
+                                    let result=JSON.parse(data);
+                                    $scope.modifyData[key]=result.data;
+                                },
+                                error: function (data) {
+                                    console.log(data);
+                                }
+                            });
+                        }
+                        else if(typeof ($scope.show[key])!="undefined"&&$scope.show[key]=="")
+                        {
+                            $scope.modifyData[key]="";
+                        }
+                        break;
+                    case "number":
+                        $scope.modifyData[key]=parseInt($scope.show[key]);
+                        break;
+                    default :
+                        $scope.modifyData[key]=$scope.show[key];
+                }
+            }
+            console.log("data",$scope.modifyData);
+            $http.post($scope.apiAction,$scope.modifyData)
+                .success(function (result)
+                {
+                    $scope.uploading.display="none";
                     if(result.status)
                     {
                         $state.go("module.api",$stateParams,{reload:true});

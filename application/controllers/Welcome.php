@@ -180,5 +180,8 @@ script;
     echo $temp;
     }
 
-
+    function test8()
+    {
+        $this->load->view("welcome/test.php");
+    }
 }

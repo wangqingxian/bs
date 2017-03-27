@@ -1508,6 +1508,57 @@ html;
     {
         $module_id=$this->uri->segment(4);
         $item_id=$this->uri->segment(5);
+
+        if(empty($module_id)||empty($item_id))
+        {
+            exit($temp);
+        }
+        if($module=$this->_model->detail(array("module_id"=>$module_id)))
+        {
+            if (empty($module["data"]))
+            {
+                exit($temp);
+            }
+            else
+            {
+                $module = $module["data"];
+            }
+            $model_base="models/base/".strtolower($module["module"])."_model/";
+            $model="models/".strtolower($module["module"])."_model.php";
+            $controller="controllers/api/".strtolower($module["module"]).".php";
+
+            if($this->file->has($model_base."name.json")
+                &&$this->file->has($model_base."entity.json")
+                &&$this->file->has($model_base."table.json")
+                &&$this->file->has($model)
+                &&$this->file->has($controller)
+                &&$this->db->table_exists(DB_TABLE_PRE.strtolower($module["module"]))
+            )
+            {
+                $name=$this->file->read($model_base."name.json");
+                $name=json_decode($name,true);
+                $table=$this->file->read($model_base."table.json");
+                $table=json_decode($table,true);
+
+                $data=array(
+                    "module"=>$module,
+                    "name"=>$name,
+                    "table"=>$table,
+                    "controller"=>"apiModify",
+                    "form_title"=>$module["module_name"]."模块 ".$module["module"]."表 数据添加"
+                );
+
+                $this->load->view("api/form.php",$data);
+            }
+            else
+            {
+                exit($error);
+            }
+        }
+        else
+        {
+            exit($temp);
+        }
     }
 
 

@@ -16,6 +16,7 @@ var app=angular.module("ac",
         "meta.umeditor",
         "ui.router.requirePolyfill",
         "ng-echarts",
+        "ngFileUpload",
         "angular-cgs-utils",
         "appBase",
         "manageController",
@@ -199,13 +200,41 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                 })
                 .state("module.api_modify",{
                     url:"/api/modify/:module/:primaryKey",
+                    resolve:{
+                        moduleApi:function ($http,$stateParams)
+                        {
+                            return $http.post("module/info",{module_id:$stateParams.module})
+                        }
+                    },
+                    controller:function ($scope,moduleApi,$stateParams,$state,$http)
+                    {
+                        if($stateParams.hasOwnProperty('module')&&$stateParams.hasOwnProperty("primaryKey"))
+                        {
+                            $scope.module_mx=moduleApi.data.data;
+                            $scope.module={
+                                add:"",
+                                delete:"",
+                                page:"",
+                                modify:""
+                            };
+                            $scope.module.add="api/"+angular.lowercase($scope.module_mx["module"])+"/add";
+                            $scope.module.delete="api/"+angular.lowercase($scope.module_mx["module"])+"/delete";
+                            $scope.module.page="api/"+angular.lowercase($scope.module_mx["module"])+"/page";
+                            $scope.module.modify="api/"+angular.lowercase($scope.module_mx["module"])+"/modify";
+                            $scope.module.detail="api/"+angular.lowercase($scope.module_mx["module"])+"/detail";
+                        }
+                        else
+                        {
+                            $state.go("module.manage",{},{reload:true});
+                        }
+                    },
                     templateUrl:function ($stateParams)
                     {
                         if($stateParams.hasOwnProperty("module")&&$stateParams.hasOwnProperty("primaryKey"))
                             return "module/api_form/apiModify/"+$stateParams.module+"/"+$stateParams.primaryKey+"/";
                         else
                             return "module/api_form/apiModify/";
-                    }
+                    },
                 })
                 .state("module.api",{
                     url:"/api/:module",

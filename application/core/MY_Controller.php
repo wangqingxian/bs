@@ -176,14 +176,37 @@ cLass Api_Controller extends Authox_Controller
         array_push($page,"select","like","order","pageNum","pageSize");
         $deletes=$entity;
         array_push($deletes,"deletes",0,1,2,3,4,5,6,7,8,9);
-        if($is_page)
-            @$data=$this->input->post_get($page);
-        else if($method=="delete")
+        if(strtolower($_SERVER["REQUEST_METHOD"]) == 'post')
         {
-            @$data=$this->input->post_get($deletes);
+            if($is_page===true&&$method=="page")
+            {
+                @$data=$this->input->post($page);
+            }
+            else if($method=="delete")
+            {
+                @$data=$this->input->post($deletes);
+            }
+            else
+            {
+                @$data=$this->input->post($entity);
+            }
         }
-        else
-            @$data=$this->input->post_get($entity);
+        else if(strtolower($_SERVER["REQUEST_METHOD"]) == 'get')
+        {
+            if($is_page===true&&$method=="page")
+            {
+                @$data=$this->input->get($page);
+            }
+            else if($method=="delete")
+            {
+                @$data=$this->input->get($deletes);
+            }
+            else
+            {
+                @$data=$this->input->get($entity);
+            }
+        }
+
         $flag=false;
         foreach ($data as $k=>$v)
         {

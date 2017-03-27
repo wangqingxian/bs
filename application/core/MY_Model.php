@@ -578,10 +578,19 @@ class Api_Model extends MY_Model{
      */
     final public function add($data)
     {
-        if(count($data) == count($data,1)){
-            return $this->db->insert($this->table_name, $data)  ;
-        }else{
-            return $this->db->insert_batch($this->table_name, $data);
+        if(empty($data))
+        {
+           $sql= "INSERT INTO ".$this->table_name." () values ()";
+           $this->db->query($sql);
+           return $this->db->affected_rows();
+        }
+        else
+        {
+            if(count($data) == count($data,1)){
+                return $this->db->insert($this->table_name, $data)  ;
+            }else{
+                return $this->db->insert_batch($this->table_name, $data);
+            }
         }
 
     }
@@ -653,7 +662,7 @@ class Api_Model extends MY_Model{
 
                 if($res)
                 {
-                    return $this->db->affected_rows();
+                    return true;
                 }
                 else
                 {
