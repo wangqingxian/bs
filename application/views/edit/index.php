@@ -39,7 +39,15 @@
                     </tr>
                     <tr>
                         <td><button ng-click="edit_remove()" class="btn btn-info">删除当前元素</button></td>
+                        <td><button ng-click="add_dom()" class="btn btn-info">添加元素</button></td>
+                    </tr>
+                    <tr>
+                        <td><button ng-click="" class="btn btn-info">获取后台数据</button></td>
+                        <td><button ng-click="" class="btn btn-info">编辑元素</button></td>
+                    </tr>
+                    <tr>
                         <td><button ng-click="edit_save()" class="btn btn-info">保存模版</button></td>
+                        <td><button ng-click="edit_close()" class="btn btn-info">关闭编辑</button></td>
                     </tr>
                 </table>
             </div>
@@ -494,9 +502,72 @@
                     </tr>
                 </table>
             </div>
+            <div ng-if="state=='dom'">
+                <table class="table">
+                    <tr>
+                        <td>添加元素</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>当前元素</td>
+                        <td>{!edit.tagName!}</td>
+                    </tr>
+                    <tr>
+                        <td>元素名称</td>
+                        <td>{!edit.name!}</td>
+                    </tr>
+                    <tr>
+                        <td>元素ID</td>
+                        <td>{!edit.id!}</td>
+                    </tr>
+                    <tr>
+                        <td>操作</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" ng-click="add_nav()">添加导航栏</button></td>
+                        <td><button class="btn btn-default">添加布局容器</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default">添加普通文本</button></td>
+                        <td><button class="btn btn-default">添加格式文本</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default">添加块级元素(div)</button></td>
+                        <td><button class="btn btn-default">添加行内元素(span)</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default">添加超链接</button></td>
+                        <td><button class="btn btn-default">添加视频</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default">添加列表(ui>li)</button></td>
+                        <td><button class="btn btn-default">添加表格(table)</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default">添加普通图片</button></td>
+                        <td><button class="btn btn-default">添加轮播图</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default">添加循环模版</button></td>
+                        <td><button class="btn btn-default">添加分页按钮</button></td>
+                    </tr>
+                </table>
+                <table class="table" style="margin-top: 40px;">
+                    <tr>
+                        <td><button class="btn btn-info">保存模版</button></td>
+                        <td><button class="btn btn-info">返回</button></td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <div class="col-xs-9 col-xs-offset-3"  style="padding: 20px 15px 15px 15px;height: calc(99.9%);overflow-y: auto;" >
-            <div id="container" name="container" style="height: 100%;width:100% ;border: 1px solid #d3d3d3;padding: 10px;position: relative;background-color: white;">
+            <div style="position: absolute;top: -1px;right: 7px;">
+                <button ng-click="remove_init()" class="btn btn-xs btn-danger" style="">清空内部所有元素</button>
+                <button ng-click="item_init()" class="btn btn-xs btn-default">选中</button>
+            </div>
+            <div id="container" name="container" ac-drag-in=""
+                 style="height: 100%;width:100% ;border: 1px solid #d3d3d3;padding: 10px;position: relative;background-color: white;">
                 <?=$html?>
             </div>
         </div>

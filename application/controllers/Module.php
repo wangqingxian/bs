@@ -1636,9 +1636,5 @@ html;
         }
     }
 
-    public function api_upload()
-    {
-
-    }
 
 }

@@ -110,7 +110,7 @@ class Manage extends Authox_Controller
         );
 
         $os["getOsRelease"]=explode("|",$os["getOsRelease"])[0];
-        $os["getDisk"]=explode("/",$os["getWebPath"])[0];
+        $os["getDisk"]=explode("/",$os["getWebPath"])[0]."/";
         $os["getDiskFree"]=round(disk_free_space($os["getDisk"])/1024/1024/1024,2)."GB";
         $os["getDiskTotal"]=round(@disk_total_space(".") / (1024 * 1024 * 1024), 2)."GB";
         $os["getTotalMem"]=round($os["getTotalMem"]/1024/1024/1024,0)."GB";

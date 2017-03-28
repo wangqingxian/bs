@@ -21,13 +21,84 @@ class Router extends Authox_Controller
         $this->file = new Filesystem($this->adapter);
     }
 
+    function set_index()
+    {
+        $input=json_decode($this->input->raw_input_stream,true);
+
+        if(!is_array($input)||empty($input))
+        {
+            exit(json_decode(array(
+                "status"=>false,
+                "message"=>"参数错误"
+            )));
+        }
+
+        $url=array_key_exists("url",$input)?$input["url"]:"";
+
+        if(empty($url))
+        {
+            exit(json_decode(array(
+                "status"=>false,
+                "message"=>"参数错误"
+            )));
+        }
+
+        $app_js="app.js.json";
+        $router_config="router.config.json";
+
+        if($this->file->has($app_js))
+        {
+            $app=$this->file->read($app_js);
+            $app=json_decode($app,true);
+            $app["config"]["when"]=$url;
+
+            $this->file->put($app_js,json_encode($app));
+        }
+        else
+        {
+            $app=array();
+            $app["config"]["when"]=$url;
+            $this->file->put($app_js,json_encode($app));
+        }
+
+        if($this->file->has($router_config))
+        {
+            $router=$this->file->read($router_config);
+            $router=json_decode($router,true);
+            $router["index"]=$url;
+
+            $this->file->put($router_config,json_encode($router));
+        }
+        else
+        {
+            $router=array();
+            $router["index"]=$url;
+
+            $this->file->put($router_config,json_encode($router));
+        }
+
+        $this->_re();
+
+        echo json_encode(array(
+            "status"=>true,
+            "message"=>"设置首页成功"
+        ));
+    }
+
     /**
      * 根据app.js.json生成app.js
      * 未完成
      */
     private function _re()
     {
-
+        $app_js="app.js.json";
+        if($this->file->has($app_js))
+        {
+            $app=$this->file->read($app_js);
+            $app=json_decode($app,true);
+            $this->load->helper("app_js");
+            $this->file->put("app.js",app_js($app));
+        }
     }
 
     /**
@@ -73,7 +144,8 @@ class Router extends Authox_Controller
             if(!$this->file->has($router["template"].".html"))
             {
                 $this->file->put($router["template"].".html","");
-                $this->file->put($router["template"].".json","");
+                $this->file->put($router["template"].".json","[]");
+                $this->file->put($router["template"].".js","");
             }
 
             $contents=$this->file->read("router.config.json");
@@ -147,7 +219,8 @@ class Router extends Authox_Controller
             $this->file->put("router.config.json",json_encode($contents));
             $this->file->put("app.js.json",json_encode(array("config"=>$contents)));
             $this->file->put($router["name"].".html","");
-            $this->file->put($router["name"].".json","");
+            $this->file->put($router["name"].".json","[]");
+            $this->file->put($router["name"].".js","");
 
             $back=array(
                 "status"=>true,
@@ -277,6 +350,8 @@ class Router extends Authox_Controller
                 $this->file->delete($del["template"].".html");
             if($this->file->has($del["template"].".json"))
                 $this->file->delete($del["template"].".json");
+            if($this->file->has($del["template"].".js"))
+                $this->file->delete($del["template"].".js");
         }
 
         $this->_re();
@@ -378,7 +453,9 @@ class Router extends Authox_Controller
         if(!$this->file->has($modify["template"].".html"))
             $this->file->put($modify["template"].".html","");
         if(!$this->file->has($modify["template"].".json"))
-            $this->file->put($modify["template"].".json","");
+            $this->file->put($modify["template"].".json","[]");
+        if(!$this->file->has($modify["template"].".js"))
+            $this->file->put($modify["template"].".js","");
 
         $this->_re();
         echo json_encode($back);
@@ -465,16 +542,41 @@ class Router extends Authox_Controller
      */
     function items()
     {
+        $index="";
         if($this->file->has("router.config.json"))
         {
             $router=$this->file->read("router.config.json");
             $router=json_decode($router,true);
+            if(array_key_exists("index",$router))
+            {
+                $index=$router["index"];
+                foreach ($router['state'] as $k=>$v)
+                {
+                    if($v['url']==$index)
+                    {
+                        $index=$v;
+                        break;
+                    }
+                }
+            }
             $router=$router["state"];
         }
         else if($this->file->has("app.js.json"))
         {
             $router=$this->file->read("app.js.json");
             $router=json_decode($router,true);
+            if(array_key_exists("when",$router["config"]))
+            {
+                $index=$router["config"]["when"];
+                foreach ($router['config']["state"] as $k=>$v)
+                {
+                    if($v['url']==$index)
+                    {
+                        $index=$v;
+                        break;
+                    }
+                }
+            }
             $router=$router["config"]["state"];
         }
         else
@@ -482,6 +584,7 @@ class Router extends Authox_Controller
             exit(json_encode(array(
                 "status"=>true,
                 "message"=>"没有初始化",
+                "index"=>$index,
                 "data"=>array(),
             )));
         }
@@ -489,6 +592,7 @@ class Router extends Authox_Controller
         $back=array(
             "status"=>true,
             "message"=>"获取成功",
+            "index"=>$index,
             "data"=>$router
         );
         echo json_encode($back);

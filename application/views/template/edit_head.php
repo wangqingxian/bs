@@ -11,7 +11,7 @@
     <!--css样式-->
     <link rel="stylesheet" href="<?=NPM?>bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="<?=NPM?>font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" href="<?=ADMIN_CSS?>style.css">
+    <link rel="stylesheet" href="<?=ADMIN_CSS?>user.css">
     <link rel="stylesheet" href="<?=BOWER?>angular-ui-tree/dist/angular-ui-tree.css">
     <link rel="stylesheet" href="<?=NPM?>angular-bootstrap-colorpicker/css/colorpicker.min.css">
     <link rel="stylesheet" href="<?=NPM?>jquery-ui-dist/jquery-ui.css">

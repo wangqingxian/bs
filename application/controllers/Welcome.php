@@ -22,15 +22,23 @@ class Welcome extends CI_Controller {
 	 */
 	public function __construct()
     {
-        $this->authox_start=true;
-
         parent::__construct();
     }
 
 
     public function index()
 	{
-		//$this->load->view('welcome_message');
+	    $this->load->config("aconfig.php");
+	    $data=array();
+	    $data["ac_title"]=$this->config->item("ac_title");
+        $this->load->view("template/user_head.php",$data);
+        $this->load->view("welcome/index.php");
+        $this->load->view("template/foot.php");
+	}
+
+	function ttt()
+    {
+        //$this->load->view('welcome_message');
         $this->load->helper("array");
         //echo utf_substr("sdfgdhjhsaghjhsgdf",2);
         $provider = \probe\Factory::create();
@@ -48,8 +56,8 @@ class Welcome extends CI_Controller {
         $svn=$this->config->item("svn_repository");
 //        echo "svn=".$svn;
         var_dump($this->session->authorityData);
+    }
 
-	}
 	function test(){
 	    $b=array('__halt_compiler', 'abstract', 'and', 'array', 'as',
             'break', 'callable', 'case', 'catch', 'class', 'clone',

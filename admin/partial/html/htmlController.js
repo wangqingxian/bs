@@ -3,6 +3,7 @@
  */
 angular.module("htmlController")
 .value("$htmlAction",{
+    "set_index":"router/set_index",
     "routerItems":"router/items",
     "routerAdd":"router/add",
     "routerTemplate":"router/template",

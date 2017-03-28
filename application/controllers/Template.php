@@ -52,7 +52,8 @@ class Template extends Authox_Controller
         if(!$this->file->has($template["name"].".html"))
         {
             $this->file->put($template["name"].".html","");
-            $this->file->put($template["name"].".json","");
+            $this->file->put($template["name"].".json","[]");
+            $this->file->put($template["name"].".js","");
             $back=array(
                 "status"=>true,
                 "message"=>"添加成功"
@@ -99,9 +100,14 @@ class Template extends Authox_Controller
 
         if($this->file->has($delete["basename"]))
             $this->file->delete($delete["basename"]);
-        if($this->file->has($delete["basename"]))
-            $this->file->delete($delete["basename"]);
 
+        $base_name=explode(".",$delete["basename"])[0];
+
+        if($this->file->has($base_name.".json"))
+            $this->file->delete($base_name.".json");
+
+        if($this->file->has($base_name.".js"))
+            $this->file->delete($base_name.".js");
 
         $back=array(
             "status"=>true,
@@ -143,10 +149,18 @@ class Template extends Authox_Controller
 
         $flag=true;
         if((!$this->file->has($modify["new"].".html")&&$this->file->has($modify["filename"].".html"))
-            &&(!$this->file->has($modify["new"].".json")&&$this->file->has($modify["filename"].".json")))
+            &&(!$this->file->has($modify["new"].".json")&&$this->file->has($modify["filename"].".json"))
+            &&(!$this->file->has($modify["new"].".js")&&$this->file->has($modify["filename"].".js"))
+        )
         {
+            $content=$this->file->read($modify['filename'].".html");
+            @str_replace("<script src='user/".$modify["filename"].".js'></script>",
+                        "<script src='user/".$modify["new"].".js'></script>",
+                        $content);
+            $this->file->put($modify['filename'],$content);
             $this->file->rename($modify["filename"].".html",$modify["new"].".html");
             $this->file->rename($modify["filename"].".json",$modify["new"].".json");
+            $this->file->rename($modify["filename"].".js",$modify["new"].".js");
         }
         else
             $flag=false;

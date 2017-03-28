@@ -13,6 +13,7 @@ $config['svn_password']="123456";
 
 $config["super_admin"]="";
 $config["super_password"]="";
+$config["ac_title"]="我的个人网站";
 
 $config['ac_status'] = array (
     'systemVersion' => '1.0.0',

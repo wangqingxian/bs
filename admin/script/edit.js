@@ -327,6 +327,29 @@ app.controller("rootController",function (
         $scope.state="index";
 
     }
+
+    $scope.item_init=function ()
+    {
+        //更换选定元素是清除排序拖拽
+        if($scope.edit.drag)
+            $scope.edit_drag("stop");
+        if($scope.edit.sort)
+            $scope.edit_sort("stop");
+
+        $scope.getInfo($("#container"));
+
+        $scope.state="index";
+    }
+
+    $scope.remove_init=function ()
+    {
+        if(window.confirm("确定要清空所有元素，该操作无法撤消"))
+        {
+            $("#container").html("");
+            edit_box.html("");
+        }
+    }
+
     $scope.item_remove=function (item)
     {
         let select=angular.element(item.target).parent();
@@ -370,8 +393,8 @@ app.controller("rootController",function (
                 handle:".edit-button-4",
                 stop:function (event,ui)
                 {
-                    console.log(ui.item);
-                    console.log(ui.item.prev());
+                    //console.log(ui.item);
+                    //console.log(ui.item.prev());
                     let edit_now=edit_box.find("#"+ui.item.attr("id"));
                     if(ui.item.prev().length==0)
                     {
@@ -419,6 +442,14 @@ app.controller("rootController",function (
         }
     }
 
+    $scope.edit_close=function ()
+    {
+        if(confirm("确定要关闭编辑？"))
+        {
+            window.close();
+        }
+    }
+
     //修改css
     $scope.edit_css=function ()
     {
@@ -430,6 +461,44 @@ app.controller("rootController",function (
     {
         $scope.state="class";
     }
+
+    $scope.add_dom=function ()
+    {
+        $scope.state="dom";
+        //更换选定元素是清除排序拖拽
+        if($scope.edit.drag)
+            $scope.edit_drag("stop");
+        if($scope.edit.sort)
+            $scope.edit_sort("stop");
+    }
+
+    $scope.add_nav=function ()
+    {
+        let temp=`
+<nav class="navbar navbar-default" role="navigation">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="#">Home</a>
+	</div>
+    <ul class="nav navbar-nav">
+			<li class="active"><a href="#">Link</a></li>
+			<li><a href="#">Link</a></li>
+	</ul>
+	<ul class="nav navbar-nav navbar-right">
+		<li><a href="#">Link</a></li>
+		<li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+			<ul class="dropdown-menu">
+				<li><a href="#">Action</a></li>
+				<li><a href="#">Another action</a></li>
+				<li><a href="#">Something else here</a></li>
+				<li><a href="#">Separated link</a></li>
+			</ul>
+		</li>
+	</ul>
+</nav>
+        `;
+    }
+
     //确定修改css
     $scope.css_sure=function ()
     {
@@ -531,7 +600,18 @@ app.directive("acEdit",function ($compile, $parse,uuid2)
                 elem.children(".edit-button-4").remove();
 
             })
-            //TODO 未完成
+
+
+        }
+    };
+});
+app.directive("acDragIn",function ($compile, $parse,uuid2)
+{
+    return {
+        restrict: 'A',
+        link: function (scope, elem)
+        {
+
             elem.on("dragenter",function (ev)
             {
                 if(scope.edit.drag)
@@ -574,8 +654,6 @@ app.directive("acEdit",function ($compile, $parse,uuid2)
                     })
                 }
             })
-
-
 
         }
     };

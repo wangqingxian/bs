@@ -12,12 +12,25 @@
                     <a class="btn btn-success" ng-click="router()">添加路由</a>
                     <a class="btn btn-danger" ng-click="delete()">删除路由</a>
                     <a class="btn btn-info" ng-click="modify()">修改路由</a>
+                    <a class="btn btn-default" ng-click="set_index()">设为首页</a>
                     <a class="btn btn-primary" ng-click="edit()">可视化编辑</a>
                 </span>
             </div>
         </form>
     </div>
     <div class="col-xs-12" style="border-top: 1px solid gainsboro;margin-top: -5px;">
+        <div class="row" style="padding: 15px;">
+            <table >
+                <tr>
+                    <td style="padding: 5px;">首页名称:</td>
+                    <td style="padding: 5px;">{{index.name}}</td>
+                    <td style="padding: 5px;">首页路由:</td>
+                    <td style="padding: 5px;">{{index.url}}</td>
+                    <td style="padding: 5px;">首页模版:</td>
+                    <td style="padding: 5px;" ng-cloak="">{{index.template+".html"}}</td>
+                </tr>
+            </table>
+        </div>
         <div class="row" style="padding: 15px;">
             <div ng-repeat="item in show|filter:{name:searchdata}"  ng-click="select(item,show)"
                  class="col-xs-2 select-hover" style="text-align: center;height: 99px;">

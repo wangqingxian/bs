@@ -15,7 +15,7 @@ angular.module("htmlController")
                 {
                     $scope.data = result;
                     $scope.show = result.data;
-
+                    $scope.index=result.index;
                 }
                 else {
                     $scope.data = {};
@@ -174,6 +174,31 @@ angular.module("htmlController")
         }
         else if(edit.length>1)
             alert("同时只能选择一个模版")
+    }
+
+    $scope.set_index=function ()
+    {
+        let index=$scope.getselect();
+        if(index.length==1)
+        {
+            $http.post($htmlAction.set_index,index[0])
+                .success(function (result)
+                {
+                    if(result.status)
+                    {
+                        $scope.getdata();
+                        alert("设置成功")
+                    }
+                    else
+                    {
+                        alert(result.message);
+                    }
+                })
+        }
+        else
+        {
+            alert("只能有一个首页");
+        }
     }
 
 })

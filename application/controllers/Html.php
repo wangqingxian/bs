@@ -158,15 +158,20 @@ class Html extends Authox_Controller
         $safe = preg_replace($preg2,"",$temp,-1);
 
         $script=substr($file,0,-5);
-        $script="<script src='".$script.".js'></script>";
+        $script="<script src='user/".$script.".js'></script>";
 
         $safe=$safe.$script;
         $this->file->put($file,$safe);
-
+        $this->_re();
         echo json_encode(array(
             "status"=>true,
             "message"=>"保存成功"
         ));
+    }
+
+    private function _re()
+    {
+        //初始化或生成js文件
     }
 
 }
