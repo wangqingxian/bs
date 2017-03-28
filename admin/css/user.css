@@ -1,0 +1,181 @@
+@charset "UTF-8";
+/* CSS Document */
+html, body {
+    height: 100%;
+}
+
+a {
+    color: black;
+}
+
+a:hover{
+    cursor: pointer;
+}
+
+body {
+    background-color: #F5F5F5;
+    font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+    font-size: 13px;
+}
+
+.btn-primary {
+    background-color: #1ABC9C;
+    border: 1px solid #1ABC9C;
+}
+
+.btn {
+    margin-right: 8px;
+}
+
+.angular-ui-tree-handle {
+    background: #f8faff;
+    border: 1px solid #dae2ea;
+    color: #7c9eb2;
+    padding: 10px 10px;
+}
+
+.angular-ui-tree-handle:hover {
+    color: #438eb9;
+    background: #f4f6f7;
+    border-color: #dce2e8;
+}
+
+.angular-ui-tree-placeholder {
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+tr.angular-ui-tree-empty {
+    height:100px
+}
+
+.group-title {
+    background-color: #687074 !important;
+    color: #FFF !important;
+}
+
+
+/* --- Tree --- */
+.tree-node {
+    border: 1px solid #dae2ea;
+    background: #f8faff;
+    color: #7c9eb2;
+    cursor: pointer;
+}
+
+.nodrop {
+    background-color: #f2dede;
+}
+
+.tree-node-content {
+    margin: 10px;
+}
+.tree-handle {
+    padding: 10px;
+    background: #428bca;
+    color: #FFF;
+    margin-right: 10px;
+}
+
+.angular-ui-tree-handle:hover {
+}
+
+.angular-ui-tree-placeholder {
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.edit-label{
+    font-size: 14px;
+    padding:9px 8px;
+}
+
+[ng-messages] {
+    height: 22px;
+}
+.required{
+    padding:9px 0 0 0;
+    color:#ff5151;
+}
+
+.noWrap {
+    overflow: hidden;
+    white-space: nowrap;
+    -webkit-text-overflow: ellipsis;
+    -khtml-text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+.echarts{
+    padding: 0px;
+    height: 300px;
+    border: dashed 1px darkblue;
+}
+
+.select-hover:hover{
+    outline:1px solid gainsboro;
+
+}
+
+.font-color {
+    width: 20px;
+    height: 20px;
+    border:1px solid #efefef;
+    background-color: #d4d4d4;
+    display: inline-block;
+}
+
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+    width:9px;
+    height:9px;
+}
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius:10px;
+}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+    border-radius:10px;
+    background:rgba(0,0,0,0.1);
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background:rgba(255,0,0,0.4);
+}
+
+.edit-button-1{
+    position: absolute;top:-20px;right:0;margin-right: 0;
+
+}
+
+.edit-button-2{
+    position: absolute;top:-20px;right:28px;
+
+}
+
+.edit-button-3{
+    position: absolute;top:-20px;right:64px;
+
+}
+.edit-button-4{
+    position: absolute;top:-20px;right:100px;
+    cursor: pointer;
+
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+    -webkit-appearance: none !important;
+    margin: 0;
+}
