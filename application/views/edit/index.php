@@ -42,7 +42,7 @@
                         <td><button ng-click="add_dom()" class="btn btn-info">添加元素</button></td>
                     </tr>
                     <tr>
-                        <td><button ng-click="" class="btn btn-info">获取后台数据</button></td>
+                        <td><button ng-click="get_api_data()" class="btn btn-info">后台数据管理</button></td>
                         <td><button ng-click="" class="btn btn-info">编辑元素</button></td>
                     </tr>
                     <tr>
@@ -555,8 +555,59 @@
                 </table>
                 <table class="table" style="margin-top: 40px;">
                     <tr>
-                        <td><button class="btn btn-info">保存模版</button></td>
-                        <td><button class="btn btn-info">返回</button></td>
+                        <td><button class="btn btn-info" ng-click="edit_save()">保存模版</button></td>
+                        <td><button ng-click="dom_back()" class="btn btn-info">返回</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-if="state=='data'">
+                <div style="min-height: 500px">
+                    <table class="table"  ng-hide="data_show_hide">
+                        <tr>
+                            <td>数据名</td>
+                            <td>接口</td>
+                            <td>操作</td>
+                        </tr>
+                        <tr ng-repeat="api in getdata">
+                            <td>{!api.show!}</td>
+                            <td>{!api.url!}</td>
+                            <td>
+                                <button class="btn btn-default btn-xs" title="详情" ng-click="data_detail(api)">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                                <button class="btn btn-default btn-xs" title="删除" ng-click="data_delete(api)">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <table class="table" style="min-height: 500px" ng-show="data_show_hide">
+                        <tr>
+                            <td colspan="2">
+                                从后台获取的数据是[{},{},....]这样的
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>中文名</td>
+                            <td>英文名</td>
+                        </tr>
+                        <tr ng-repeat="(key,value) in show_data">
+                            <td>{!key!}</td>
+                            <td>{!value!}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <table class="table">
+                    <tr>
+                        <td>
+                            <button class="btn btn-default" ng-click="add_api_data()">添加数据</button>
+                        </td>
+                        <td>
+                            <button ng-click="data_back()" ng-if="!data_show_hide" class="btn btn-default">返回</button>
+                            <button ng-click="data_detail_back()" ng-if="data_show_hide" class="btn btn-default">返回</button>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -566,8 +617,8 @@
                 <button ng-click="remove_init()" class="btn btn-xs btn-danger" style="">清空内部所有元素</button>
                 <button ng-click="item_init()" class="btn btn-xs btn-default">选中</button>
             </div>
-            <div id="container" name="container" ac-drag-in=""
-                 style="height: 100%;width:100% ;border: 1px solid #d3d3d3;padding: 10px;position: relative;background-color: white;">
+            <div id="container" name="container" ac-drag-in="" class="container-fluid"
+                 style="min-height: 100%;width:100% ;border: 1px solid #d3d3d3;padding: 0 15px 0 15px;position: relative;background-color: white;">
                 <?=$html?>
             </div>
         </div>

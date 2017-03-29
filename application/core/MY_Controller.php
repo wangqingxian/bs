@@ -46,10 +46,6 @@ class Authox_Controller extends MY_Controller
                 }
             }
         }
-        else if($controller=="html"&&$function="save")
-        {
-
-        }
         else if($controller==$this->router->default_controller)
         {
 

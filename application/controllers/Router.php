@@ -219,8 +219,9 @@ class Router extends Authox_Controller
             $this->file->put("router.config.json",json_encode($contents));
             $this->file->put("app.js.json",json_encode(array("config"=>$contents)));
             $this->file->put($router["name"].".html","");
-            $this->file->put($router["name"].".json","[]");
-            $this->file->put($router["name"].".js","");
+            $this->file->put($router["name"].".json","{}");
+            $this->file->put($router["name"].".js",
+                "angular.module(\"ac\").controller(\"".$router['name']."\",function(\$scope){})");
 
             $back=array(
                 "status"=>true,
@@ -453,9 +454,10 @@ class Router extends Authox_Controller
         if(!$this->file->has($modify["template"].".html"))
             $this->file->put($modify["template"].".html","");
         if(!$this->file->has($modify["template"].".json"))
-            $this->file->put($modify["template"].".json","[]");
+            $this->file->put($modify["template"].".json","{}");
         if(!$this->file->has($modify["template"].".js"))
-            $this->file->put($modify["template"].".js","");
+            $this->file->put($modify["template"].".js",
+                "angular.module(\"ac\").controller(\"".$modify['template']."\",function(\$scope){})");
 
         $this->_re();
         echo json_encode($back);

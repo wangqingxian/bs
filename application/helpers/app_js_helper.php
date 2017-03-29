@@ -26,7 +26,7 @@ function app_js($input)
             {
                 $state.="\t\t.state(\"".$v['name']."\",{\r\n"
                         ."\t\t\t\"url\":\"".$v['url']."\",\r\n"
-                        ."\t\t\t\"templateUrl\":\"user/".$v['template'].".html\"\r\n"
+                        ."\t\t\t\"templateUrl\":\"get/html/".$v['template'].".html\"\r\n"
                         ."\t\t})\r\n";
             }
         }

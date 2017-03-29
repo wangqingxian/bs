@@ -117,7 +117,9 @@ class Html extends Authox_Controller
         $temp=$this->_html($html);
         if($temp["status"])
         {
-            echo "<html><body id='container'>".$temp["data"]."</body></html>";
+            echo "<html><body id='container'>";
+            echo $temp["data"];
+            echo "</body></html>";
         }
         else
         {
@@ -144,6 +146,7 @@ class Html extends Authox_Controller
 
         $temp=array_key_exists("html",$data)?$data['html']:"";
         $file=array_key_exists("file",$data)?$data["file"]:"";
+        $json=array_key_exists("json",$data)?$data["json"]:"";
         if(empty($temp)&&empty($file)&&!$this->file->has($file))
         {
             exit(json_encode(array(
@@ -157,11 +160,14 @@ class Html extends Authox_Controller
         $temp = preg_replace($preg,"",$temp,-1);
         $safe = preg_replace($preg2,"",$temp,-1);
 
-        $script=substr($file,0,-5);
-        $script="<script src='user/".$script.".js'></script>";
+        $sn=substr($file,0,-5);
 
-        $safe=$safe.$script;
         $this->file->put($file,$safe);
+        if(empty($json))
+        {
+            $json="{}";
+        }
+        $this->file->put($sn.".json",$json);
         $this->_re();
         echo json_encode(array(
             "status"=>true,

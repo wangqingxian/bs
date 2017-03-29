@@ -52,8 +52,9 @@ class Template extends Authox_Controller
         if(!$this->file->has($template["name"].".html"))
         {
             $this->file->put($template["name"].".html","");
-            $this->file->put($template["name"].".json","[]");
-            $this->file->put($template["name"].".js","");
+            $this->file->put($template["name"].".json","{}");
+            $this->file->put($template["name"].".js",
+                "angular.module(\"ac\").controller(\"".$template['name']."\",function(\$scope){})");
             $back=array(
                 "status"=>true,
                 "message"=>"添加成功"
@@ -124,6 +125,7 @@ class Template extends Authox_Controller
      */
     function modify()
     {
+        //TODO: 修改名字 要重新生成js文件
         $data=$data=json_decode(json_encode(json_decode($this->input->raw_input_stream)),true);
 
         if(!is_array($data))
@@ -153,11 +155,6 @@ class Template extends Authox_Controller
             &&(!$this->file->has($modify["new"].".js")&&$this->file->has($modify["filename"].".js"))
         )
         {
-            $content=$this->file->read($modify['filename'].".html");
-            @str_replace("<script src='user/".$modify["filename"].".js'></script>",
-                        "<script src='user/".$modify["new"].".js'></script>",
-                        $content);
-            $this->file->put($modify['filename'],$content);
             $this->file->rename($modify["filename"].".html",$modify["new"].".html");
             $this->file->rename($modify["filename"].".json",$modify["new"].".json");
             $this->file->rename($modify["filename"].".js",$modify["new"].".js");
@@ -212,5 +209,6 @@ class Template extends Authox_Controller
 
         echo json_encode($back);
     }
+
 
 }

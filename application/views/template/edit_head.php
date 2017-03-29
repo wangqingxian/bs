@@ -24,11 +24,11 @@
     <script src="<?=NPM?>angular-animate/angular-animate.js"></script>
     <script src="<?=NPM?>angular-messages/angular-messages.js"></script>
     <script src="<?=NPM?>angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
-    <script src="<?=NPM?>angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="<?=NPM?>oclazyload/dist/oclazyLoad.js"></script>
+<!--    <script src="--><?//=NPM?><!--angular-ui-router/release/angular-ui-router.js"></script>-->
+<!--    <script src="--><?//=NPM?><!--oclazyload/dist/oclazyLoad.js"></script>-->
     <script src="<?=BOWER?>ng-lodash/build/ng-lodash.js"></script>
     <script src="<?=BOWER?>angular-ui-tree/dist/angular-ui-tree.js"></script>
-    <script src="<?=NPM?>kuitos-angular-utils/polyfills/ui-router-require-polyfill.js"></script>
+<!--    <script src="--><?//=NPM?><!--kuitos-angular-utils/polyfills/ui-router-require-polyfill.js"></script>-->
     <script src="<?=NPM?>angular-i18n/angular-locale_zh.js"></script>
     <script src="<?=NPM?>ng-echarts/dist/ng-echarts.min.js"></script>
     <script src="<?=NPM?>angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>

@@ -317,4 +317,50 @@ class Manage extends Authox_Controller
 
 
     }
+
+    function module_name()
+    {
+        $input=json_decode($this->input->raw_input_stream,true);
+        if(empty($input)||!is_array($input))
+        {
+            exit(json_encode(array(
+                'status'=>false,
+                "message"=>"参数错误"
+            )));
+        }
+        $module=array_key_exists("module",$input)?$input["module"]:"";
+        if(empty($module))
+        {
+            exit(json_encode(array(
+                'status'=>false,
+                "message"=>"参数错误"
+            )));
+        }
+        else
+        {
+            $adapter = new Local(APPPATH."models/base/".$module."_model/");
+            $filesystem = new Filesystem($adapter);
+
+            $name=array();
+            if($filesystem->has("name.json"))
+            {
+                $name=$filesystem->read("name.json");
+                $name=json_decode($name,true);
+                if(empty($name))
+                {
+                    $name=array();
+                }
+
+            }
+            $back=array(
+                "status"=>true,
+                "data"=>$name,
+            );
+
+            echo json_encode($back);
+
+        }
+
+
+    }
 }

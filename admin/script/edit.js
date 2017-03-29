@@ -3,13 +3,13 @@
  */
 const app=angular.module("ac",
         [
-            "ui.router",
+            // "ui.router",
             "ui.bootstrap",
-            "oc.lazyLoad",
+            // "oc.lazyLoad",
             "ngMessages",
             "ngAnimate",
             "ui.tree",
-            "ui.router.requirePolyfill",
+            // "ui.router.requirePolyfill",
             "ng-echarts",
             "angular-cgs-utils",
             "appBase",
@@ -19,7 +19,7 @@ const app=angular.module("ac",
 app.run(['$rootScope', function ($rootScope) {
 
 }]);
-app.config(function ($stateProvider,$urlRouterProvider,$interpolateProvider)
+app.config(function ($interpolateProvider)
 {
     $interpolateProvider.startSymbol('{!');
     $interpolateProvider.endSymbol('!}');
@@ -28,11 +28,44 @@ app.value("$editAction",{
    save:"html/save"
 });
 app.controller("rootController",function (
-    $http,$scope,$rootScope,$q,$state,$stateParams,$location,$timeout,$interval,
-    $document,$window,$sce,$log,$compile,$filter,uuid2,$parse,lodash,$editAction)
+    $http,$scope,$rootScope,$q,$location,$timeout,$interval,
+    $document,$window,$sce,$log,$compile,$filter,uuid2,$parse,lodash,$editAction,$uibModal)
 {
+    //data-dom-type=[
+    //  normal,
+    //  nav,
+    //  nav-item,
+    //  document,
+    //  p
+    //  a,
+    //  img,
+    //  repeat,   ng-repeat循环模版
+    //  table,
+    //  tr,
+    //  tb,
+    //  ul,
+    //  li,
+    //  page,
+    //  layout,
+    //  carousel, 轮播图
+    //  movie
+    //]
+    //not_drag 保存不能拖拽的data-dom-option
+    $scope.not_drag=[
+        "nav-item"
+    ];
+    $scope.stop_a=function ($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+    $scope.data_show_hide=false;
+    let js_data=JSON.parse($("#json").text());
     $scope.select={};
-    $scope.show={};
+    //保存从后台获取的数据
+    $scope.show=js_data.hasOwnProperty("show")?js_data["show"]:{};
+    //获取数据的函数配置
+    $scope.getdata=js_data.hasOwnProperty("getdata")?js_data["getdata"]:{};
+
     $scope.select["background-repeat"]=[
         "repeat",
         "repeat-x",
@@ -144,6 +177,8 @@ app.controller("rootController",function (
         "wait",
         "help"
     ];
+
+
     $scope.css=[
         "color",
         "background-color",
@@ -154,6 +189,7 @@ app.controller("rootController",function (
         "background-image",
         "font-size",
         "font-weight",
+        "border",
         "border-top-color",
         "border-top-style",
         "border-top-width",
@@ -212,6 +248,7 @@ app.controller("rootController",function (
         $scope.edit.tagName=select[0].tagName;
         $scope.edit.name=select.attr("name");
         $scope.edit.id=select.attr("id");
+        $scope.edit.type=$scope.edit.item.attr("data-dom-type");
         $scope.edit.sort=false;
         $scope.edit.drag=false;
     }
@@ -322,6 +359,7 @@ app.controller("rootController",function (
         if($scope.edit.sort)
             $scope.edit_sort("stop");
         let select=angular.element(item.target).parent();
+        select.css("outline","red dotted thick");
         $scope.getInfo(select);
 
         $scope.state="index";
@@ -390,7 +428,7 @@ app.controller("rootController",function (
         {
             $scope.edit.sort=true;
             $scope.edit.item.sortable({
-                handle:".edit-button-4",
+                handle:".edit-button-2",
                 stop:function (event,ui)
                 {
                     //console.log(ui.item);
@@ -422,6 +460,10 @@ app.controller("rootController",function (
             if($scope.edit.item.attr("id")=="container")
             {
                 alert("container作为容器无法拖拽")
+            }
+            else if(lodash.findIndex($scope.not_drag,$scope.edit.type))
+            {
+                alert("该元素类型不适合拖拽");
             }
             else
             {
@@ -472,32 +514,6 @@ app.controller("rootController",function (
             $scope.edit_sort("stop");
     }
 
-    $scope.add_nav=function ()
-    {
-        let temp=`
-<nav class="navbar navbar-default" role="navigation">
-	<div class="navbar-header">
-		<a class="navbar-brand" href="#">Home</a>
-	</div>
-    <ul class="nav navbar-nav">
-			<li class="active"><a href="#">Link</a></li>
-			<li><a href="#">Link</a></li>
-	</ul>
-	<ul class="nav navbar-nav navbar-right">
-		<li><a href="#">Link</a></li>
-		<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-			<ul class="dropdown-menu">
-				<li><a href="#">Action</a></li>
-				<li><a href="#">Another action</a></li>
-				<li><a href="#">Something else here</a></li>
-				<li><a href="#">Separated link</a></li>
-			</ul>
-		</li>
-	</ul>
-</nav>
-        `;
-    }
 
     //确定修改css
     $scope.css_sure=function ()
@@ -506,11 +522,13 @@ app.controller("rootController",function (
         $scope.edit.item.css(css);
         edit_box.find($scope.edit.item_id).css(css);
         $scope.edit.item.data("old",$scope.edit.old_css);
+        let new_css=$scope.edit.item.css(["min-height","min-width","position","margin-top"]);
         $("body").data($scope.edit.item.attr("id"),{
-            "min-height":css["min-height"],
-            "min-width":css["min-width"],
-            "position":css["position"],
-            "margin-top":css["margin-top"]
+            "min-height":new_css["min-height"],
+            "min-width":new_css["min-width"],
+            "position":new_css["position"],
+            "margin-top":new_css["margin-top"],
+            "outline":""
         });
         $scope.getCss($scope.edit.item);
         $scope.state="index";
@@ -534,12 +552,30 @@ app.controller("rootController",function (
         $scope.getCss($scope.edit.item);
     }
 
+    $scope.data_back=function ()
+    {
+        $scope.state="index";
+    }
+
+    $scope.data_delete=function (api)
+    {
+        delete $scope.getdata[api.show];
+
+        let json=angular.toJson({
+            show:$scope.show,
+            getdata:$scope.getdata,
+        })
+
+        $("#json").html(json);
+    }
+
     $scope.edit_save=function ()
     {
         //半成品
         let post={
             html:edit_box.html(),
-            file:$("body").attr("id")
+            file:$("body").attr("id"),
+            json:$("#json").text()
         }
         $http.post($editAction.save,post)
             .success(function (result) {
@@ -562,7 +598,160 @@ app.controller("rootController",function (
             })
     }
 
+    $scope.get_api_data=function ()
+    {
+        $scope.state="data";
+    }
+
+    $scope.data_detail=function (api)
+    {
+        $scope.data_show_hide=true;
+
+        $scope.show_data=$scope.show[api.show];
+    }
+
+    $scope.data_detail_back=function ()
+    {
+        $scope.data_show_hide=false;
+    }
+
+    $scope.dom_back=function ()
+    {
+        $scope.state='index';
+    }
+
+    $scope.add_api_data=function()
+    {
+        let modal=$uibModal.open({
+            templateUrl: "admin/partial/edit/api_data_ctrl.html",
+            controller: "api_data_ctrl",
+            backdrop: "static",
+            size:"lg",
+            resolve: {
+                api_data:function ()
+                {
+                    return {
+                        show:angular.copy($scope.show),
+                        getdata:angular.copy($scope.getdata),
+                    };
+                },
+            }
+        });
+        modal.result.then(function (reback)
+        {
+            //reback  close返回的值
+            // $uibModalInstance.close(reback)
+            $scope.show=reback.show;
+            $scope.getdata=reback.getdata;
+
+            let json=angular.toJson(reback);
+
+            $("#json").html(json);
+        },
+        function (re)
+        {
+            //re dismiss返回的值
+            //$uibModalInstance.dismiss(re)
+        });
+    }
+
+    $scope.add_nav=function ()
+    {
+        let id_1=uuid2.newid();
+        let id_2=uuid2.newid();
+        let temp=`
+<div class="row ac-nav" ac-edit="" id="${id_1}" name="${id_1}" data-dom-type="nav">
+    <div class="ac-nav-item" ac-edit="" id="${id_2}" name="${id_2}" data-dom-type="nav-item">导航1</div>
+</div>
+        `;
+        let ele=$compile(temp)($scope);
+
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+    }
+
+
+
 });
+app.controller("api_data_ctrl",function ($scope,$uibModalInstance,api_data,$http)
+{
+    $scope.api_data=api_data;
+    $scope.state="show";
+    $scope.show={};
+    $scope.edit={
+        show:"",
+        url:"",
+        module:""
+    };
+    $scope.module={};
+
+    $http.post("module/page",{pageSize:9999,pageNum:1})
+        .success(function (result)
+        {
+            if(result.status)
+            {
+                $scope.module=result.data;
+            }
+        })
+
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.add=function ()
+    {
+        if($scope.edit.show==""||$scope.api_data.getdata.hasOwnProperty($scope.edit.show))
+        {
+            alert("名称不合适");
+        }
+        else
+        {
+            let r1 = /^(?!_)(?!.*?_$)[a-zA-Z][a-zA-Z0-9_]+$/;
+            let r2 = /^[a-zA-Z]+$/i;
+
+            if(r1.test($scope.edit.show)||r2.test($scope.edit.show))
+            {
+                if($scope.edit.module!="")
+                {
+                    $scope.edit.url="api/"+$scope.edit.module+"/page";
+
+                    $http.post("manage/module_name",{module:$scope.edit.module})
+                        .success(function (result)
+                        {
+                            if(result.status)
+                            {
+                                $scope.api_data.show[$scope.edit.show]=result.data;
+                                $scope.api_data.getdata[$scope.edit.show]=$scope.edit;
+                                $uibModalInstance.close($scope.api_data);
+                            }
+                            else
+                            {
+                                alert("添加失败"+result.message);
+                            }
+
+                        })
+                }
+                else
+                {
+                    alert("来源必选")
+                }
+            }
+            else
+            {
+                alert("名称不合适，只能有英文");
+            }
+        }
+    }
+})
 app.directive("acEdit",function ($compile, $parse,uuid2)
 {
     return {
@@ -580,10 +769,12 @@ app.directive("acEdit",function ($compile, $parse,uuid2)
                     elem.css("min-width","50px");
                     elem.css("position","relative");
                     elem.css("margin-top","20px");
+                    elem.css("outline","red dotted thick");
                     let edit=`<button ng-click="item_select($event)" class="btn btn-default btn-xs edit-button-1">选中</button>`;
-                    edit+=`<button ng-click="item_remove($event)"   class="btn btn-danger btn-xs edit-button-2">删除</button>`;
-                    edit+=`<a  class="btn btn-primary btn-xs edit-button-3">移动</a>`;
-                    edit+=`<a  class="btn btn-info btn-xs edit-button-4">排序</a>`;
+                    edit+=`<a  class="btn btn-info btn-xs edit-button-2">排序</a>`;
+                    edit+=`<button ng-click="item_remove($event)"   class="btn btn-danger btn-xs edit-button-3">删除</button>`;
+                    edit+=`<a  class="btn btn-primary btn-xs edit-button-4">移动</a>`;
+
                     let t=$compile(edit)(scope);
                     elem.append(t);
                     scope.edit.button=t;
@@ -594,6 +785,7 @@ app.directive("acEdit",function ($compile, $parse,uuid2)
             elem.mouseleave(function ()
             {
                 elem.css($("body").data(elem.attr("id")));
+                elem.css('outline',"");
                 elem.children(".edit-button-1").remove();
                 elem.children(".edit-button-2").remove();
                 elem.children(".edit-button-3").remove();
@@ -616,7 +808,8 @@ app.directive("acDragIn",function ($compile, $parse,uuid2)
             {
                 if(scope.edit.drag)
                 {
-                    let ele=angular.element(ev.target)
+                    let ele=angular.element(ev.target);
+                    ele.css("outline","red dotted thick");
                     ele.on("dragover",function (ev)
                     {
                         ev.preventDefault();
@@ -626,13 +819,14 @@ app.directive("acDragIn",function ($compile, $parse,uuid2)
                         if(scope.edit.drag)
                         {
                             ev.preventDefault();
-                            let data=ev.originalEvent.dataTransfer.getData("ID");
                             let event=ev.originalEvent;
+                            let data=event.dataTransfer.getData("ID");
                             //TODO： 未完成 有报错
                             let temp=$('#'+data).prop("outerHTML");
                             temp=$compile(temp)(scope);
                             $("#"+data).remove();
                             angular.element(ev.target).append(temp);
+                            angular.element(ev.target).css("outline","");
                             let edit_box=$("#edit");
                             let move=edit_box.find("#"+data);
                             let mt=move.prop("outerHTML");
@@ -648,9 +842,11 @@ app.directive("acDragIn",function ($compile, $parse,uuid2)
                     })
                     elem.on("dragleave",function (ev)
                     {
-                        angular.element(ev.target).off("dragover");
-                        angular.element(ev.target).off("drop");
-                        angular.element(ev.target).off("dragleave");
+                        let e=angular.element(ev.target);
+                        e.off("dragover");
+                        e.off("drop");
+                        e.off("dragleave");
+                        e.css("outline","");
                     })
                 }
             })

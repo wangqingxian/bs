@@ -179,3 +179,18 @@ input::-webkit-inner-spin-button{
     -webkit-appearance: none !important;
     margin: 0;
 }
+
+.ac-nav{
+    padding:0 15px 0 15px;
+    background-color:gainsboro ;
+    height:45px;
+}
+
+.ac-nav-item{
+    display: inline-block;
+    float: left;
+    height:100%;
+    font-size: 18px;
+    padding:10px;
+    cursor: pointer;
+}
