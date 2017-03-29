@@ -1,0 +1,31 @@
+<div class="modal-content">
+    <div class="modal-header" style="border: none;">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">获取后台数据</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <table class="table"  >
+                <tr >
+                    <td style="vertical-align: middle;">数据名称</td>
+                    <td><input type="text" class="form-control" ng-model="edit.show"></td>
+                </tr>
+                <tr >
+                    <td style="vertical-align: middle;">获取来源(api模块)</td>
+                    <td >
+                        <select class="form-control" ng-model="edit.module"
+                                ng-options="item.module as item.module_name for item in module">
+                            <option value="" disabled style="display: none;" hidden></option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="add()">完成</button>
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>
