@@ -1,0 +1,55 @@
+<div class="modal-content">
+    <div class="modal-header" style="border: none;">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">添加块级元素(div)</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="css_tb_box">
+                    <tr>
+                        <td>高度</td>
+                        <td>
+                            <div class="input-group">
+                                <input type="number" class="form-control" ng-model="edit_css['height']">
+                                <div class="input-group-addon" >px</div>
+                            </div>
+                        </td>
+                        <td>宽度</td>
+                        <td>
+                            <div class="input-group">
+                                <input type="number" class="form-control" ng-model="edit.css['width']">
+                                <div class="input-group-addon" >px</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="150">字体颜色</td>
+                        <td>
+                            <div ac-color class="font-color" colorpicker ng-model="edit_css['color']" style="border: 1px solid gray"></div>
+                        </td>
+                        <td width="150">背景颜色</td>
+                        <td>
+                            <div ac-color class="font-color" colorpicker ng-model="edit_css['background-color']" style="border: 1px solid gray"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ok()">完成</button>
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>
+<style>
+    #css_tb_box{
+        width:100%;
+    }
+    #css_tb_box td{
+        padding:5px;
+        vertical-align: middle;
+    }
+</style>

@@ -1,0 +1,56 @@
+<div class="modal-content">
+    <div class="modal-header" style="border: none;">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">添加块级元素(div)</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="css_tb_box">
+                    <tr>
+                        <td>
+                            <div style="display: inline-block;float: left;font-size: 16px;">url&nbsp;&nbsp;</div>
+                            <div style="display: inline-block;float: left;">
+                                <button ng-click="web_in()" class="btn btn-default btn-xs" ng-class="{true:'btn-primary',false:'btn-default'}[web_url]">站内网址</button>
+                                <button ng-click="web_out()" class="btn btn-default btn-xs" ng-class="{false:'btn-primary',true:'btn-default'}[web_url]">站外网址</button>
+                            </div>
+                        </td>
+                        <td>
+                            <div ng-show="web_url">
+                                <select ng-model="a.url" ng-options="item.url as item.name for item in router" class="form-control">
+                                    <option value="" disabled hidden style="display: none;"></option>
+                                </select>
+                            </div>
+                            <div ng-hide="web_url">
+                                <input type="url" ng-model="a.url" class="form-control">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="font-size: 16px;">展示文字</div>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" ng-model="a.data">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ok()">完成</button>
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>
+<style>
+    #css_tb_box{
+        width:100%;
+    }
+    #css_tb_box td{
+        padding:5px;
+        vertical-align: middle;
+    }
+</style>

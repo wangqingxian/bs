@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="<?=BOWER?>angular-ui-tree/dist/angular-ui-tree.css">
     <link rel="stylesheet" href="<?=NPM?>angular-bootstrap-colorpicker/css/colorpicker.min.css">
     <link rel="stylesheet" href="<?=NPM?>jquery-ui-dist/jquery-ui.css">
+    <link rel="stylesheet" href="<?=ADMIN_URL?>umeditor/dist/utf8-php/themes/default/css/umeditor.css">
     <!--js类库-->
     <script src="<?=NPM?>jquery/dist/jquery.js"></script>
     <script src="<?=NPM?>angular/angular.js"></script>
@@ -27,10 +28,13 @@
 <!--    <script src="--><?//=NPM?><!--angular-ui-router/release/angular-ui-router.js"></script>-->
 <!--    <script src="--><?//=NPM?><!--oclazyload/dist/oclazyLoad.js"></script>-->
     <script src="<?=BOWER?>ng-lodash/build/ng-lodash.js"></script>
+    <script src="<?=ADMIN_URL?>umeditor/dist/utf8-php/umeditor.js"></script>
+    <script src="<?=ADMIN_JS?>config/umeditor.config.js"></script>
     <script src="<?=BOWER?>angular-ui-tree/dist/angular-ui-tree.js"></script>
 <!--    <script src="--><?//=NPM?><!--kuitos-angular-utils/polyfills/ui-router-require-polyfill.js"></script>-->
     <script src="<?=NPM?>angular-i18n/angular-locale_zh.js"></script>
     <script src="<?=NPM?>ng-echarts/dist/ng-echarts.min.js"></script>
+    <script src="<?=BOWER?>meta.umeditor/src/meta.umeditor.js"></script>
     <script src="<?=NPM?>angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>
 
     <!--angular控制器等-->

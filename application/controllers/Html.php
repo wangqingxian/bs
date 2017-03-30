@@ -177,7 +177,7 @@ class Html extends Authox_Controller
 
     private function _re()
     {
-        //初始化或生成js文件
+        //TODO: 初始化或生成js文件
     }
 
 }

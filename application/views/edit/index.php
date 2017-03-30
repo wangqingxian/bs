@@ -21,6 +21,10 @@
                         <td>{!edit.id!}</td>
                     </tr>
                     <tr>
+                        <td>元素类型</td>
+                        <td>{!dom_type[edit.type]!}</td>
+                    </tr>
+                    <tr>
                         <td>操作</td>
                         <td></td>
                     </tr>
@@ -68,6 +72,10 @@
                     <tr>
                         <td>元素ID</td>
                         <td>{!edit.id!}</td>
+                    </tr>
+                    <tr>
+                        <td>元素类型</td>
+                        <td>{!dom_type[edit.type]!}</td>
                     </tr>
                     <tr>
                         <td>CSS</td>
@@ -493,12 +501,12 @@
                         <td>{!edit.id!}</td>
                     </tr>
                     <tr>
-                        <td>操作</td>
-                        <td></td>
+                        <td>元素类型</td>
+                        <td>{!dom_type[edit.type]!}</td>
                     </tr>
                     <tr>
-                        <td><button ng-click="edit_css()" class="btn btn-info">修改css</button></td>
-                        <td><button ng-click="edit_class()" class="btn btn-info">修改class</button></td>
+                        <td>操作</td>
+                        <td></td>
                     </tr>
                 </table>
             </div>
@@ -521,39 +529,43 @@
                         <td>{!edit.id!}</td>
                     </tr>
                     <tr>
+                        <td>元素类型</td>
+                        <td>{!dom_type[edit.type]!}</td>
+                    </tr>
+                    <tr>
                         <td>操作</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td><button class="btn btn-default" ng-click="add_nav()">添加导航栏</button></td>
-                        <td><button class="btn btn-default">添加布局容器</button></td>
+                        <td><button class="btn btn-default" ng-click="add_layout()">添加布局容器</button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default">添加普通文本</button></td>
-                        <td><button class="btn btn-default">添加格式文本</button></td>
+                        <td><button class="btn btn-default" ng-click="add_p()">添加普通文本</button></td>
+                        <td><button class="btn btn-default" ng-click="add_document()">添加格式文本</button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default">添加块级元素(div)</button></td>
-                        <td><button class="btn btn-default">添加行内元素(span)</button></td>
+                        <td><button class="btn btn-default" ng-click="add_div()">添加块级元素</button></td>
+                        <td><button class="btn btn-default" ng-click="add_span()">添加行内元素</button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default">添加超链接</button></td>
-                        <td><button class="btn btn-default">添加视频</button></td>
+                        <td><button class="btn btn-default" ng-click="add_a()">添加超链接</button></td>
+                        <td><button class="btn btn-default" ng-click="add_movie()">添加视频</button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default">添加列表(ui>li)</button></td>
-                        <td><button class="btn btn-default">添加表格(table)</button></td>
+                        <td><button class="btn btn-default" ng-click="add_ul()">添加列表(ui>li)</button></td>
+                        <td><button class="btn btn-default" ng-click="add_table()">添加表格(table)</button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default">添加普通图片</button></td>
-                        <td><button class="btn btn-default">添加轮播图</button></td>
+                        <td><button class="btn btn-default" ng-click="add_img()">添加普通图片</button></td>
+                        <td><button class="btn btn-default" ng-click="add_carousel()">添加轮播图</button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default">添加循环模版</button></td>
-                        <td><button class="btn btn-default">添加分页按钮</button></td>
+                        <td><button class="btn btn-default" ng-click="add_repeat()">添加循环模版</button></td>
+                        <td><button class="btn btn-default" ng-click="add_page()">添加分页按钮</button></td>
                     </tr>
                 </table>
-                <table class="table" style="margin-top: 40px;">
+                <table class="table" style="margin-top: 20px;">
                     <tr>
                         <td><button class="btn btn-info" ng-click="edit_save()">保存模版</button></td>
                         <td><button ng-click="dom_back()" class="btn btn-info">返回</button></td>
@@ -561,7 +573,7 @@
                 </table>
             </div>
             <div ng-if="state=='data'">
-                <div style="min-height: 500px">
+                <div style="max-height: 500px;overflow-y: auto;">
                     <table class="table"  ng-hide="data_show_hide">
                         <tr>
                             <td>数据名</td>
@@ -617,7 +629,7 @@
                 <button ng-click="remove_init()" class="btn btn-xs btn-danger" style="">清空内部所有元素</button>
                 <button ng-click="item_init()" class="btn btn-xs btn-default">选中</button>
             </div>
-            <div id="container" name="container" ac-drag-in="" class="container-fluid"
+            <div id="container" name="container" ac-drag-in="" class="container-fluid" data-dom-type="container"
                  style="min-height: 100%;width:100% ;border: 1px solid #d3d3d3;padding: 0 15px 0 15px;position: relative;background-color: white;">
                 <?=$html?>
             </div>

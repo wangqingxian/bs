@@ -7,10 +7,10 @@ extension=php_com_dotnet.dll
 extension=php_fileinfo.dll
 
 还剩添加元素编辑元素
-+导航
-格式文本
-普通文本
-div布局
++导航     基本完成 没有编辑
+格式文本  ok
+普通文本  ok
+div布局    ok
 普通图
 轮播图
 循环模版

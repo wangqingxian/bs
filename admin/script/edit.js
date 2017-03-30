@@ -14,7 +14,8 @@ const app=angular.module("ac",
             "angular-cgs-utils",
             "appBase",
             "ngLodash",
-            "colorpicker.module"
+            "colorpicker.module",
+            "meta.umeditor"
         ]);
 app.run(['$rootScope', function ($rootScope) {
 
@@ -29,30 +30,43 @@ app.value("$editAction",{
 });
 app.controller("rootController",function (
     $http,$scope,$rootScope,$q,$location,$timeout,$interval,
-    $document,$window,$sce,$log,$compile,$filter,uuid2,$parse,lodash,$editAction,$uibModal)
+    $document,$window,$sce,$log,$compile,$filter,uuid2,$parse,
+    lodash,$editAction,$uibModal,HtmlUtil)
 {
-    //data-dom-type=[
-    //  normal,
-    //  nav,
-    //  nav-item,
-    //  document,
-    //  p
-    //  a,
-    //  img,
-    //  repeat,   ng-repeat循环模版
-    //  table,
-    //  tr,
-    //  tb,
-    //  ul,
-    //  li,
-    //  page,
-    //  layout,
-    //  carousel, 轮播图
-    //  movie
-    //]
+    $scope.dom_type= {
+        normal:"普通元素",
+        nav:"导航条",
+        "nav-item":"导航按钮",
+        document:"格式文本",
+        p:"无格式文本",
+        a:"超链接",
+        img:"图片",
+        repeat:"循环模版",
+        "in-repeat":"循环模版子元素",
+        "table":"表格",
+        tr:"表格的行",
+        tb:"表格的列",
+        ul:"列表",
+        li:"列表的行",
+        page:"分页按钮",
+        "layout-row":"布局div(行)", //布局div row col-xs - *
+        "layout-col":"布局div(列)",
+        carousel:"轮播图",
+        movie:"视频",
+        container:"底部容器"
+    }
+
     //not_drag 保存不能拖拽的data-dom-option
     $scope.not_drag=[
-        "nav-item"
+        "nav-item",
+        "repeat",
+        "in-repeat"
+    ];
+
+    $scope.not_add=[
+        "nav-item",
+        "p",
+        "document"
     ];
     $scope.stop_a=function ($event) {
         $event.preventDefault();
@@ -461,7 +475,7 @@ app.controller("rootController",function (
             {
                 alert("container作为容器无法拖拽")
             }
-            else if(lodash.findIndex($scope.not_drag,$scope.edit.type))
+            else if(lodash.findIndex($scope.not_drag,$scope.edit.type)>=0)
             {
                 alert("该元素类型不适合拖拽");
             }
@@ -506,12 +520,19 @@ app.controller("rootController",function (
 
     $scope.add_dom=function ()
     {
-        $scope.state="dom";
-        //更换选定元素是清除排序拖拽
-        if($scope.edit.drag)
-            $scope.edit_drag("stop");
-        if($scope.edit.sort)
-            $scope.edit_sort("stop");
+        if(lodash.findIndex($scope.not_add,$scope.edit.type)>=0)
+        {
+            alert("该元素内不能添加新元素");
+        }
+        else
+        {
+            $scope.state="dom";
+            //更换选定元素是清除排序拖拽
+            if($scope.edit.drag)
+                $scope.edit_drag("stop");
+            if($scope.edit.sort)
+                $scope.edit_sort("stop");
+        }
     }
 
 
@@ -678,8 +699,307 @@ app.controller("rootController",function (
         }
     }
 
+    $scope.add_layout=function ()
+    {
+        let modal=$uibModal.open({
+            templateUrl: "admin/partial/edit/add_layout_ctrl.html",
+            controller: "add_layout_ctrl",
+            backdrop: "static",
+        });
+        modal.result.then(function (reback)
+            {
+                //reback  close返回的值
+                // $uibModalInstance.close(reback)
+                $scope.create_col(reback.row,reback.col);
+            },
+            function (re)
+            {
+                //re dismiss返回的值
+                //$uibModalInstance.dismiss(re)
+            });
+    }
+
+    $scope.create_col=function (row,col)
+    {
+        let temp=``;
+        if(row)
+        {
+            let row_id=uuid2.newid();
+            temp+=`<div class="row" id="${row_id}" name="${row_id}" ac-edit ac-drag-in style="min-height: 40px;" data-dom-type="layout-row">`;
+            let len=col.length;
+            for (let i=0;i<len;i++)
+            {
+                let col_id=uuid2.newid();
+                temp+=`<div class="${col[i]}" id="${col_id}" name="${col_id}" ac-edit ac-drag-in style="min-height: 35px" data-dom-type="layout-col"></div>`;
+            }
+            temp+="</div>";
+        }
+        else
+        {
+            let len=col.length;
+            for (let i=0;i<len;i++)
+            {
+                let col_id=uuid2.newid();
+                temp+=`<div class="${col[i]}" id="${col_id}" name="${col_id}" ac-edit ac-drag-in style="min-height: 35px" data-dom-type="layout-col"></div>`;
+            }
+        }
 
 
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+    }
+
+    $scope.add_p=function ()
+    {
+        let modal=$uibModal.open({
+            templateUrl: "admin/partial/edit/add_p_ctrl.html",
+            controller: "add_p_ctrl",
+            backdrop: "static",
+        });
+        modal.result.then(function (reback)
+            {
+                //reback  close返回的值
+                // $uibModalInstance.close(reback)
+                $scope.create_p(reback);
+            },
+            function (re)
+            {
+                //re dismiss返回的值
+                //$uibModalInstance.dismiss(re)
+            });
+    }
+
+    $scope.create_p=function (p)
+    {
+        let temp=``;
+        let uuid=uuid2.newid();
+        let safe=HtmlUtil.htmlEncodeByRegExp(p);
+        temp+=`<div id="${uuid}" name="${uuid}" ac-edit data-dom-type="p"><p>${safe}</p></div>`
+
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+    }
+
+    $scope.add_document=function ()
+    {
+        let modal=$uibModal.open({
+            templateUrl: "admin/partial/edit/add_document_ctrl.html",
+            controller: "add_document_ctrl",
+            backdrop: "static",
+        });
+        modal.result.then(function (reback)
+            {
+                //reback  close返回的值
+                // $uibModalInstance.close(reback)
+                $scope.create_document(reback);
+            },
+            function (re)
+            {
+                //re dismiss返回的值
+                //$uibModalInstance.dismiss(re)
+            });
+    }
+
+    $scope.create_document=function (doc)
+    {
+        let safe=HtmlUtil.toSafeHtml(doc);
+        let temp=``;
+        let uuid=uuid2.newid();
+
+        temp+=`
+<div id="${uuid}" name="${uuid}" ac-edit data-dom-type="document">
+${safe}
+</div>`;
+
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+    }
+
+    $scope.add_div=function ()
+    {
+        let modal=$uibModal.open({
+            templateUrl: "admin/partial/edit/add_div_ctrl.html",
+            controller: "add_div_ctrl",
+            backdrop: "static",
+        });
+        modal.result.then(function (reback)
+            {
+                //reback  close返回的值
+                // $uibModalInstance.close(reback)
+                $scope.create_div(reback);
+            },
+            function (re)
+            {
+                //re dismiss返回的值
+                //$uibModalInstance.dismiss(re)
+            });
+    }
+
+    $scope.create_div=function (div)
+    {
+        let css="";
+        let temp=``;
+        if(typeof(div.height)!="undefined")
+        {
+            css+=`height:${div.height}px;`;
+        }
+        else
+        {
+            css+=`min-height:1px;`
+        }
+
+        if(typeof(div.width)!="undefined")
+        {
+            css+=`width:${div.width}px;`;
+        }
+        else
+        {
+            css+=`min-width:50px;`
+        }
+
+        css+=`color:${div.color};background-color:${div["background-color"]};`;
+        let uuid=uuid2.newid();
+        temp=`
+<div id="${uuid}" name="${uuid}" style="${css}" ac-edit ac-drag-in data-dom-type="normal"></div>`;
+
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+    }
+
+    $scope.add_span=function()
+    {
+        if(confirm("你确定在当前选中元素中添加<span></span>"))
+        {
+            let temp=``;
+            let uuid=uuid2.newid();
+
+            temp+=`<div id="${uuid}" name="${uuid}"  style="min-height: 2px;min-width:50px;display: inline-block;"
+                    ac-drag-in ac-edit data-dom-type="normal" ></div>`;
+
+            let ele=$compile(temp)($scope);
+
+            $scope.edit.item.append(ele);
+            if($scope.edit.item_id=="#container")
+            {
+                edit_box.append(temp);
+            }
+            else
+            {
+                edit_box.find($scope.edit.item_id).append(temp);
+            }
+        }
+    }
+    
+    $scope.add_a=function ()
+    {
+        let modal=$uibModal.open({
+            templateUrl: "admin/partial/edit/add_a_ctrl.html",
+            controller: "add_a_ctrl",
+            backdrop: "static",
+        });
+        modal.result.then(function (reback)
+            {
+                //reback  close返回的值
+                // $uibModalInstance.close(reback)
+                $scope.create_a(reback);
+            },
+            function (re)
+            {
+                //re dismiss返回的值
+                //$uibModalInstance.dismiss(re)
+            });
+    }
+
+    $scope.create_a=function (a)
+    {
+        let temp=``;
+        let attr=``;
+        if(a.type=="href")
+        {
+            attr+=` href="${a.url}" `;
+        }
+        else if(a.type=="sref")
+        {
+            attr+=` ui-sref="${a.url}" `;
+        }
+        let uuid=uuid2.newid();
+        temp+=`<a id="${uuid}" name="${uuid}"  data-dom-type="a" ng-click="stop_a()"
+                ac-edit ac-drag-in style="min-height: 2px;min-width: 15px;">${a.data}</a>`;
+
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+
+    }
+
+    $scope.add_img=function ()
+    {
+        let modal=$uibModal.open({
+            templateUrl: "admin/partial/edit/add_img_ctrl.html",
+            controller: "add_img_ctrl",
+            backdrop: "static",
+        });
+        modal.result.then(function (reback)
+            {
+                //reback  close返回的值
+                // $uibModalInstance.close(reback)
+                $scope.create_img(reback);
+            },
+            function (re)
+            {
+                //re dismiss返回的值
+                //$uibModalInstance.dismiss(re)
+            });
+    }
+
+    $scope.create_img=function (img)
+    {
+
+    }
 });
 app.controller("api_data_ctrl",function ($scope,$uibModalInstance,api_data,$http)
 {
@@ -751,6 +1071,159 @@ app.controller("api_data_ctrl",function ($scope,$uibModalInstance,api_data,$http
             }
         }
     }
+})
+app.controller("add_layout_ctrl",function ($scope,$uibModalInstance)
+{
+    $scope.is_add=true;
+    $scope.col_num=1;
+    $scope.col=[];
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.col_change=function (ctrl)
+    {
+        if(ctrl=="+")
+        {
+            if($scope.col_num<12)
+            {
+                $scope.col_num++;
+            }
+        }
+        else if(ctrl=="-")
+        {
+            if($scope.col_num>1)
+            {
+                $scope.col_num--;
+            }
+        }
+    }
+
+    $scope.col_remove=function (col)
+    {
+        $scope.col.splice(col,1);
+    }
+    $scope.add_col=function ()
+    {
+        let col="col-xs-"+$scope.col_num;
+        $scope.col.push(col);
+    }
+
+    $scope.ok=function ()
+    {
+        $uibModalInstance.close({"row":$scope.is_add,"col":$scope.col});
+    }
+})
+app.controller("add_p_ctrl",function ($scope,HtmlUtil,$uibModalInstance)
+{
+    $scope.p="";
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.ok=function ()
+    {
+       let p=HtmlUtil.htmlEncodeByRegExp($scope.p);
+
+       if(p!="")
+       {
+           $uibModalInstance.close(p);
+       }
+       else
+       {
+           alert("不能添加空文本")
+       }
+    }
+})
+app.controller("add_document_ctrl",function ($scope, HtmlUtil, $uibModalInstance)
+{
+    $scope.doc="";
+    $scope.config={};
+    $scope.cancel=function () {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.ok=function ()
+    {
+        if($scope.doc!="")
+        {
+            let doc=HtmlUtil.toSafeHtml($scope.doc);
+            $uibModalInstance.close(doc);
+        }
+        else
+        {
+            alert("不可以添加空文本");
+        }
+    }
+})
+app.controller("add_div_ctrl",function ($scope,$uibModalInstance)
+{
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.edit_css={
+        width:undefined,
+        color:undefined,
+        height:"#000000",
+        "background-color":"#ffffff"
+    };
+
+    $scope.ok=function ()
+    {
+        $uibModalInstance.close($scope.edit_css);
+    }
+})
+app.controller("add_a_ctrl",function ($scope,$uibModalInstance,$http)
+{
+    $scope.a={
+        type:"sref",
+        url:"",
+        data:""
+    }
+
+    $scope.router={};
+
+    $http.post("router/items",{})
+        .success(function (result)
+        {
+            if(result.status)
+            {
+                $scope.router=result.data;
+            }
+        })
+
+    $scope.web_url=true;
+    $scope.cancel=function () {
+        $uibModalInstance.dismiss("cancel")
+    }
+
+    $scope.web_in=function ()
+    {
+        $scope.a.type="sref";
+        $scope.web_url=true;
+    }
+
+    $scope.web_out=function ()
+    {
+        $scope.a.type="href";
+        $scope.web_url=false;
+    }
+
+    $scope.ok=function ()
+    {
+        $uibModalInstance.close($scope.a);
+    }
+})
+app.controller("add_img_ctrl",function ($scope,$http,$uibModalInstance)
+{
+    $scope.cancel=function () {
+        $uibModalInstance.dismiss("cancel");
+    }
+
 })
 app.directive("acEdit",function ($compile, $parse,uuid2)
 {
@@ -872,5 +1345,44 @@ app.directive("acColor",function () {
                 return nv;
             })
         }
+    }
+})
+app.service("HtmlUtil",function ()
+{
+    this.htmlEncodeByRegExp=function (str)
+    {
+        let s = "";
+        if(str.length == 0) return "";
+
+        s = str;
+        s = s.replace(/</g,"&lt;");
+        s = s.replace(/>/g,"&gt;");
+
+        return s;
+    }
+
+    this.htmlDecodeByRegExp=function (str)
+    {
+        let s = "";
+        if(str.length == 0) return "";
+        s = str.replace(/&amp;/g,"&");
+        s = s.replace(/&lt;/g,"<");
+        s = s.replace(/&gt;/g,">");
+        s = s.replace(/&nbsp;/g," ");
+        s = s.replace(/&#39;/g,"\'");
+        s = s.replace(/&quot;/g,"\"");
+        return s;
+    }
+
+    this.toSafeHtml=function (str)
+    {
+        let reg=/<script[^>]*>(.|\n)*?(?=<\/script>)<\/script>/gi ;
+        let reg1=/<iframe[^>]*>(.|\n)*?(?=<\/iframe>)<\/iframe>/gi ;
+
+        let s="";
+
+        s=str.replace(reg,"");
+        s=str. replace(reg1,"");
+        return s;
     }
 })

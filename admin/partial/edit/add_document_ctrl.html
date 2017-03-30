@@ -1,0 +1,22 @@
+<div class="modal-content">
+    <div class="modal-header" style="border: none;">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">添加格式文本</h4>
+    </div>
+    <div class="modal-body" style="height: 400px;">
+        <div  style="width:565px;height:290px;" ng-model='doc'
+              meta-umeditor  meta-umeditor-config='config'></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ok()">完成</button>
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>
+<style>
+    .edui-editor-body {
+        height:290px;
+        overflow-y: auto;
+    }
+</style>

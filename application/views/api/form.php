@@ -6,6 +6,10 @@
         vertical-align: middle;
         padding: 8px;
     }
+    .edui-editor-body {
+        height:150px;
+        overflow-y: auto;
+    }
 </style>
 <div class="row" ng-controller="<?=$controller?>">
     <div class="col-xs-12">
@@ -44,7 +48,7 @@
                         <?php elseif ($item["form"]=="document"): ?>
                             <td width="80%" style="height: 150px;">
                                 <div  style="width:100%;height:150px;margin:auto;" ng-model='show.<?=$item["key"]?>'
-                                      meta-umeditor  meta-umeditor-config='config'></div>.
+                                      meta-umeditor  meta-umeditor-config='config'></div>
                             </td>
                         <?php elseif($item["form"]=="number"||$item["form"]=="double"): ?>
                             <td width="80%">

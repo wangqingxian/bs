@@ -15,7 +15,7 @@
     <?php else: ?>
         <link rel="stylesheet" href="<?=ADMIN_CSS?>style.css">
         <link rel="stylesheet" href="<?=BOWER?>angular-ui-tree/dist/angular-ui-tree.css">
-        <link type="text/css" rel="stylesheet" href="<?=ROOTURL?>/admin/umeditor/dist/utf8-php/themes/default/css/umeditor.css">
+        <link type="text/css" rel="stylesheet" href="<?=ROOTURL?>admin/umeditor/dist/utf8-php/themes/default/css/umeditor.css">
     <?php endif; ?>
     <!--js类库-->
     <script src="<?=NPM?>jquery/dist/jquery.js"></script>
