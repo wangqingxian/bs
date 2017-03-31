@@ -168,16 +168,24 @@ class Html extends Authox_Controller
             $json="{}";
         }
         $this->file->put($sn.".json",$json);
-        $this->_re();
+        $this->_re($sn);
         echo json_encode(array(
             "status"=>true,
             "message"=>"保存成功"
         ));
     }
 
-    private function _re()
+    private function _re($sn)
     {
         //TODO: 初始化或生成js文件
+        if($this->file->has($sn.".json"))
+        {
+            $content=$this->file->read($sn.".json");
+            $content=json_decode($content,true);
+
+            $this->load->helper("js");
+            $this->file->put($sn.".js",js($sn,$content));
+        }
     }
 
 }

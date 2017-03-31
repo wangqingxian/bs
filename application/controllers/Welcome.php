@@ -192,4 +192,9 @@ script;
     {
         $this->load->view("welcome/test.php");
     }
+
+    function test9()
+    {
+        echo "<?php echo 'asd' ?>";
+    }
 }

@@ -15,7 +15,8 @@ const app=angular.module("ac",
             "appBase",
             "ngLodash",
             "colorpicker.module",
-            "meta.umeditor"
+            "meta.umeditor",
+            "ngFileUpload"
         ]);
 app.run(['$rootScope', function ($rootScope) {
 
@@ -643,6 +644,7 @@ app.controller("rootController",function (
 
     $scope.add_api_data=function()
     {
+        //TODO: 可附加$stateParams附带的参数
         let modal=$uibModal.open({
             templateUrl: "admin/partial/edit/api_data_ctrl.html",
             controller: "api_data_ctrl",
@@ -998,11 +1000,65 @@ ${safe}
 
     $scope.create_img=function (img)
     {
+        let temp=``;
+        let uuid=uuid2.newid();
+        temp+=`<div id="${uuid}" name="${uuid}" ac-edit data-dom-type="img">`
+        if(img.type=='upload'||img.type=='out')
+        {
+            temp+=`
+<img src="${img.src}" class="img-responsive">`;
+        }
+        else if(img.type=="data")
+        {
+            temp+=`
+<img ng-src="{{${img.src}}" class="img-responsive">`;
+        }
+        temp+=`</div>`;
 
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+    }
+
+    $scope.create_movie=function ()
+    {
+        //TODO: 未完成
+        let temp=``;
+
+        temp=`
+<videogular vg-theme="controller.config.theme">
+	<vg-media vg-src="controller.config.sources" vg-tracks="controller.config.tracks"></vg-media>
+    <vg-controls>
+        <vg-play-pause-button></vg-play-pause-button>
+		<vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+		<vg-scrub-bar>
+			<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+		</vg-scrub-bar>
+		<vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+		<vg-volume>
+			<vg-mute-button></vg-mute-button>
+			<vg-volume-bar></vg-volume-bar>
+		</vg-volume>
+		<vg-fullscreen-button></vg-fullscreen-button>
+	</vg-controls>
+ 
+	<vg-overlay-play></vg-overlay-play>
+	<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>
+</videogular>
+`;
     }
 });
 app.controller("api_data_ctrl",function ($scope,$uibModalInstance,api_data,$http)
 {
+    //TODO: 可附加$stateParams附带的参数 未完成
     $scope.api_data=api_data;
     $scope.state="show";
     $scope.show={};
@@ -1218,10 +1274,46 @@ app.controller("add_a_ctrl",function ($scope,$uibModalInstance,$http)
         $uibModalInstance.close($scope.a);
     }
 })
-app.controller("add_img_ctrl",function ($scope,$http,$uibModalInstance)
+app.controller("add_img_ctrl",function ($scope,$http,$uibModalInstance,Upload)
 {
+    $scope.state=1;
+    $scope.type="";
+    $scope.data = {
+        file: null
+    };
+    $scope.upload=false;
     $scope.cancel=function () {
         $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.next=function (type)
+    {
+        $scope.type=type;
+        $scope.state=2;
+    }
+
+    $scope.ok=function ()
+    {
+        if (!$scope.data.file) {
+            return;
+        }
+        $scope.upload=true;
+        Upload.upload({
+            url:"manage/upload",
+            data:$scope.data,
+        }).success(function (res) {
+            if(res.status)
+            {
+                $uibModalInstance.close({type:$scope.type,src:res.data});
+            }
+            else
+            {
+                $scope.upload=false;
+                alert(res.message);
+            }
+        }).error(function (error) {
+            console.log('error',error);
+        });
     }
 
 })

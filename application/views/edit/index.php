@@ -573,7 +573,7 @@
                 </table>
             </div>
             <div ng-if="state=='data'">
-                <div style="max-height: 500px;overflow-y: auto;">
+                <div style="max-height: 500px;min-height:350px;overflow-y: auto;">
                     <table class="table"  ng-hide="data_show_hide">
                         <tr>
                             <td>数据名</td>

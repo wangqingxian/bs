@@ -36,6 +36,7 @@
     <script src="<?=NPM?>ng-echarts/dist/ng-echarts.min.js"></script>
     <script src="<?=BOWER?>meta.umeditor/src/meta.umeditor.js"></script>
     <script src="<?=NPM?>angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>
+    <script src="<?=NPM?>ng-file-upload/dist/ng-file-upload-all.js"></script>
 
     <!--angular控制器等-->
     <script src="<?=ADMIN_JS?>controller/appBaseController.js"></script>

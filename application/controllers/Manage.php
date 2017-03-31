@@ -220,7 +220,7 @@ class Manage extends Authox_Controller
         {
             $data = $this->upload->data();
 
-            $filepath="upload/".$data["file_name"];
+            $filepath=$path.$data["file_name"];
             echo json_encode(array(
                 "status"=>true,
                 "data"=>$filepath
