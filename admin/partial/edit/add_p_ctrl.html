@@ -7,13 +7,28 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-xs-12">
-                <input type="text" class="form-control" ng-model="p">
+            <div class="col-xs-12" ng-show="state==1">
+                <button class="btn btn-default btn-block p-btn-hover" ng-click="next('p')">普通文本</button>
+                <button class="btn btn-default btn-block p-btn-hover" ng-click="next('data')">后台数据</button>
+            </div>
+            <div class="col-xs-12" ng-show="state==2">
+                <div ng-if="type=='p'">
+                    <input type="text" class="form-control" ng-model="p">
+                </div>
+                <div ng-if="type=='data'">
+                    <input type="text" class="form-control" ng-model="p">
+                </div>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-success" ng-click="ok()">完成</button>
+        <button class="btn btn-success" ng-click="ok()" ng-if="state==2">完成</button>
         <button class="btn btn-default" ng-click="cancel()">取消</button>
     </div>
 </div>
+<style>
+    .p-btn-hover:hover{
+        background-color: #5ab770;
+        color: #ffffff;
+    }
+</style>

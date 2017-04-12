@@ -1,11 +1,11 @@
 <div class="log" ng-controller="login">
     <form method="post">
         <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
+            <label for="exampleInputEmail1">帐号</label>
             <input type="text" name="username" ng-model="username" id="username" class="form-control"  placeholder="username">
         </div>
         <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
+            <label for="exampleInputPassword1">密码</label>
             <input type="password" class="form-control"  name="password" ng-model="password" id="password" placeholder="Password">
         </div>
         <div style="display: inline-block;">

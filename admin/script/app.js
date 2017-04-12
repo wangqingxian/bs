@@ -290,16 +290,16 @@ app.config(["$stateProvider", "$urlRouterProvider","$ocLazyLoadProvider",
                     templateUrl:"admin/partial/html/edit.html"
                 })
                 .state("error",{ //TODO:更换404,没有权限页面
-                    url:"/error/:id",
+                    url:"/error",
                     // templateUrl:function ($stateParams) {
                     //     return "welcome/test6/"+$stateParams.id;
                     // }
-                    templateUrl:"admin/script/error/test.html",
+                    templateUrl:"err",
                 })
-                .state("other",{//TODO：测试
-                    url:"/other",
-                    template:"<div>dassssssss</div>"
-                })
+                // .state("other",{//TODO：测试
+                //     url:"/other",
+                //     template:"<div>dassssssss</div>"
+                // })
         }
     ]
 );

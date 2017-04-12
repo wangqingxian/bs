@@ -1,0 +1,25 @@
+<div class="modal-content">
+    <div class="modal-header" style="border: none;">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">修改展示文字</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <input type="text" class="form-control" ng-model="text">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ok()" >完成</button>
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>
+<style>
+    .p-btn-hover:hover{
+        background-color: #5ab770;
+        color: #ffffff;
+    }
+</style>

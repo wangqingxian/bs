@@ -396,7 +396,7 @@ class Router extends Authox_Controller
         $url="";
         for($i=0;$i<$len;$i++)
         {
-            $url="/".$modify["url"][$i];
+            $url.="/".$modify["url"][$i];
         }
 
         if($this->file->has("router.config.json")&&$this->file->has("app.js.json"))

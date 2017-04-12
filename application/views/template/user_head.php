@@ -15,9 +15,15 @@
     <link rel="stylesheet" href="<?=BOWER?>angular-ui-tree/dist/angular-ui-tree.css">
     <link rel="stylesheet" href="<?=NPM?>angular-bootstrap-colorpicker/css/colorpicker.min.css">
     <link rel="stylesheet" href="<?=NPM?>jquery-ui-dist/jquery-ui.css">
+    <link rel="stylesheet" href="<?=NPM?>videogular-themes-default/videogular.css" >
     <!--js类库-->
     <script src="<?=NPM?>jquery/dist/jquery.js"></script>
     <script src="<?=NPM?>angular/angular.js"></script>
+    <script src="<?=NPM?>angular-sanitize/angular-sanitize.js"></script>
+    <script src="<?=NPM?>videogular/videogular.js"></script>
+    <script src="<?=NPM?>videogular-controls/vg-controls.js"></script>
+    <script src="<?=NPM?>videogular-overlay-play/vg-overlay-play.js"></script>
+    <script src="<?=NPM?>videogular-buffering/vg-buffering.js"></script>
     <script src="<?=NPM?>jquery-ui-dist/jquery-ui.js"></script>
     <script src="<?=NPM?>echarts/dist/echarts.js"></script>
     <script src="<?=ADMIN_JS?>directive/angular-cgs-utils.js"></script>
@@ -35,6 +41,6 @@
 
     <!--angular控制器等-->
     <script src="<?=USER_URL?>app.js"></script>
-
+    <script src="<?=ADMIN_JS?>directive/user-directive.js"></script>
 </head>
 <body>

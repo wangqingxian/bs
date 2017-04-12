@@ -47,7 +47,7 @@
                     </tr>
                     <tr>
                         <td><button ng-click="get_api_data()" class="btn btn-info">后台数据管理</button></td>
-                        <td><button ng-click="" class="btn btn-info">编辑元素</button></td>
+                        <td><button ng-click="edit_dom()" class="btn btn-info">编辑元素</button></td>
                     </tr>
                     <tr>
                         <td><button ng-click="edit_save()" class="btn btn-info">保存模版</button></td>
@@ -552,10 +552,10 @@
                         <td><button class="btn btn-default" ng-click="add_a()">添加超链接</button></td>
                         <td><button class="btn btn-default" ng-click="add_movie()">添加视频</button></td>
                     </tr>
-                    <tr>
-                        <td><button class="btn btn-default" ng-click="add_ul()">添加列表(ui>li)</button></td>
-                        <td><button class="btn btn-default" ng-click="add_table()">添加表格(table)</button></td>
-                    </tr>
+<!--                    <tr>-->
+<!--                        <td><button class="btn btn-default" ng-click="add_ul()">添加列表(ui>li)</button></td>-->
+<!--                        <td><button class="btn btn-default" ng-click="add_table()">添加表格(table)</button></td>-->
+<!--                    </tr>-->
                     <tr>
                         <td><button class="btn btn-default" ng-click="add_img()">添加普通图片</button></td>
                         <td><button class="btn btn-default" ng-click="add_carousel()">添加轮播图</button></td>
@@ -594,21 +594,24 @@
                         </tr>
 
                     </table>
-                    <table class="table" style="min-height: 500px" ng-show="data_show_hide">
-                        <tr>
-                            <td colspan="2">
-                                从后台获取的数据是[{},{},....]这样的
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>中文名</td>
-                            <td>英文名</td>
-                        </tr>
-                        <tr ng-repeat="(key,value) in show_data">
-                            <td>{!key!}</td>
-                            <td>{!value!}</td>
-                        </tr>
-                    </table>
+                    <div style="max-height: 500px;min-height:350px;overflow-y: auto;">
+                        <table class="table" ng-show="data_show_hide">
+                            <tr>
+                                <td colspan="2">
+                                    从后台获取的数据是[{},{},....]这样的
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>中文名</td>
+                                <td>英文名</td>
+                            </tr>
+                            <tr ng-repeat="(key,value) in show_data">
+                                <td>{!key!}</td>
+                                <td>{!value!}</td>
+                            </tr>
+                        </table>
+                    </div>
+
                 </div>
 
                 <table class="table">
@@ -620,6 +623,71 @@
                             <button ng-click="data_back()" ng-if="!data_show_hide" class="btn btn-default">返回</button>
                             <button ng-click="data_detail_back()" ng-if="data_show_hide" class="btn btn-default">返回</button>
                         </td>
+                    </tr>
+                    <tr>
+                        <td><button ng-click="edit_save()" class="btn btn-default">保存</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-if="state=='edit_dom'">
+                <table class="table">
+                    <tr>
+                        <td>元素编辑</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>当前元素</td>
+                        <td>{!edit.tagName!}</td>
+                    </tr>
+                    <tr>
+                        <td>元素名称</td>
+                        <td>{!edit.name!}</td>
+                    </tr>
+                    <tr>
+                        <td>元素ID</td>
+                        <td>{!edit.id!}</td>
+                    </tr>
+                    <tr>
+                        <td>元素类型</td>
+                        <td>{!dom_type[edit.type]!}</td>
+                    </tr>
+                    <tr>
+                        <td>操作</td>
+                        <td></td>
+                    </tr>
+                    <tr ng-if="findIndex(not_edit,edit.type)>=0">
+                        <td colspan="2">
+                            该元素没有特殊编辑选项
+                        </td>
+                    </tr>
+                    <tr ng-if="edit.type=='nav'">
+                        <td>
+                            <button class="btn btn-success" ng-click="edit_nav_add()">添加导航按钮</button>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr ng-if="edit.type=='nav-item'">
+                        <td><button class="btn btn-success" ng-click="edit_nav_item_data()">修改展示文字</button></td>
+                        <td><button class="btn btn-success" ng-click="edit_nav_item_url()">修改url</button></td>
+                    </tr>
+                    <tr ng-if="edit.type=='a'">
+                        <td><button class="btn btn-success" ng-click="edit_a_data()">修改展示文字</button></td>
+                        <td><button class="btn btn-success" ng-click="edit_a_url()">修改url</button></td>
+                    </tr>
+                    <tr ng-if="edit.type=='document'">
+                        <td><button class="btn btn-success" ng-click="edit_document_p()">修改格式文本</button></td>
+                    </tr>
+                    <tr ng-if="edit.type=='document-data'">
+                        <td><button class="btn btn-success" ng-click="edit_document_data()">修改展示数据</button></td>
+                    </tr>
+                    <tr ng-if="edit.type=='movie'||edit.type=='movie-data'" >
+                        <td><button class="btn btn-success" ng-click="edit_movie_ctrl()">更换播放源</button></td>
+                    </tr>
+                </table>
+                <table class="table" style="margin-top: 15px;">
+                    <tr>
+                        <td><button class="btn btn-success" ng-click="edit_save()">保存模版</button></td>
+                        <td><button class="btn btn-success" ng-click="dom_back()">返回</button></td>
                     </tr>
                 </table>
             </div>

@@ -46,7 +46,7 @@ class Login extends CI_Controller
         //密码错误剩余重试次数
         $rtime = $this->Times_model->get_one(array(
                                             'username'=>$data['username'],
-                                            'is_admin'=>1,
+
                                             "login_time >= "=>SYS_TIME-7200
                                         )
                                     );
@@ -94,7 +94,7 @@ class Login extends CI_Controller
                 $times = $maxloginfailedtimes-intval($rtime['failure_times']);
                 $this->Times_model->update(array(
                                             'login_ip'=>$ip,
-                                            'is_admin'=>1,
+
                                             'failure_times'=>'+=1'
                                         ),
                                         array(
@@ -106,13 +106,13 @@ class Login extends CI_Controller
             {
                 $this->Times_model->delete(array(
                                                 'username'=>$data['username'],
-                                                'is_admin'=>1
+
                                             )
                                         );
                 $this->Times_model->insert(array(
                                                 'username'=>$data['username'],
                                                 'login_ip'=>$ip,
-                                                'is_admin'=>1,
+
                                                 'login_time'=>SYS_TIME,
                                                 'failure_times'=>1
                                             )

@@ -263,6 +263,31 @@ angular.module('angular-cgs-utils', [])
         }
     };
 })
+.directive("urlitem",function () {
+    return {
+        require: "ngModel",
+        link: function (scope, element, attrs, ngModel) {
+            var t1 = /^(?!_)(?!.*?_$)[a-zA-Z][a-zA-Z0-9_]+$/;
+            var t2 = /^[a-zA-Z]+$/i;
+            var t3=/^:[A-Za-z]+$/;
+            if (!ngModel) {
+                return false;
+            }
+            ngModel.$parsers.unshift(function (viewValue) {
+
+                if (t1.test(viewValue) || t2.test(viewValue)||t3.test(viewValue))
+                {
+                    //匹配
+                    ngModel.$setValidity("tablename", true);
+                }
+                else {
+                    ngModel.$setValidity("tablename", false);
+                }
+                return viewValue;
+            });
+        }
+    };
+})
 .directive("notclass", function () {
     return {
         require: "ngModel",

@@ -39,6 +39,7 @@ app.controller("rootController",function (
         nav:"导航条",
         "nav-item":"导航按钮",
         document:"格式文本",
+        "document-data":"格式文本",
         p:"无格式文本",
         a:"超链接",
         img:"图片",
@@ -54,11 +55,13 @@ app.controller("rootController",function (
         "layout-col":"布局div(列)",
         carousel:"轮播图",
         movie:"视频",
+        "movie-data":"视频",
         container:"底部容器"
     }
 
     //not_drag 保存不能拖拽的data-dom-option
     $scope.not_drag=[
+        "nav",
         "nav-item",
         "repeat",
         "in-repeat"
@@ -67,7 +70,11 @@ app.controller("rootController",function (
     $scope.not_add=[
         "nav-item",
         "p",
-        "document"
+        "document",
+        "document-data",
+        "nav",
+        "movie",
+        "movie-data"
     ];
     $scope.stop_a=function ($event) {
         $event.preventDefault();
@@ -366,6 +373,15 @@ app.controller("rootController",function (
     $scope.getInfo($("#container"));
     $scope.getCss($("#container"));
 
+    $scope.all_stop=function ()
+    {
+        if($scope.edit.drag)
+            $scope.edit_drag("stop");
+        if($scope.edit.sort)
+            $scope.edit_sort("stop");
+
+    }
+
     $scope.item_select=function (item)
     {
         //更换选定元素是清除排序拖拽
@@ -403,19 +419,22 @@ app.controller("rootController",function (
         }
     }
 
-    $scope.item_remove=function (item)
+    $scope.item_remove=function ($event)
     {
-        let select=angular.element(item.target).parent();
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        let select=angular.element($event.target).parent();
 
         if(window.confirm("确定要删除ID="+select.attr("id")+"的元素么\n删除后无法恢复"))
         {
+            select.remove();
             edit_box.find("#"+select.attr("id")).remove();
             if(select.attr("id")==$scope.edit.item.attr("id"))
             {
                 $scope.getInfo($("#container"));
                 $scope.edit.state="index";
             }
-            select.remove();
         }
     }
 
@@ -451,7 +470,13 @@ app.controller("rootController",function (
                     let edit_now=edit_box.find("#"+ui.item.attr("id"));
                     if(ui.item.prev().length==0)
                     {
-                        edit_box.find("#"+ui.item.parent().attr("id")).prepend(edit_now.prop("outerHTML"));
+                        let pid="#"+ui.item.parent().attr("id");
+                        if(pid!="#container")
+                            edit_box.find(pid).prepend(edit_now.prop("outerHTML"));
+                        else if(pid=="#container")
+                        {
+                            edit_box.prepend(edit_now.prop("outerHTML"));
+                        }
                     }
                     else
                     {
@@ -476,7 +501,7 @@ app.controller("rootController",function (
             {
                 alert("container作为容器无法拖拽")
             }
-            else if(lodash.findIndex($scope.not_drag,$scope.edit.type)>=0)
+            else if(lodash.findIndex($scope.not_drag,o=>{return o==$scope.edit.type})>=0)
             {
                 alert("该元素类型不适合拖拽");
             }
@@ -519,9 +544,13 @@ app.controller("rootController",function (
         $scope.state="class";
     }
 
+    $scope.findIndex=function (arr,ser)
+    {
+        return lodash.findIndex(arr,o=>{ return ser==o });
+    }
     $scope.add_dom=function ()
     {
-        if(lodash.findIndex($scope.not_add,$scope.edit.type)>=0)
+        if(lodash.findIndex($scope.not_add,o=>{ return o== $scope.edit.type})>=0)
         {
             alert("该元素内不能添加新元素");
         }
@@ -582,6 +611,7 @@ app.controller("rootController",function (
     $scope.data_delete=function (api)
     {
         delete $scope.getdata[api.show];
+        delete $scope.show[api.show];
 
         let json=angular.toJson({
             show:$scope.show,
@@ -680,11 +710,24 @@ app.controller("rootController",function (
 
     $scope.add_nav=function ()
     {
+        if(confirm("确定要在该元素内添加导航条"))
+        {
+            $scope.create_nav();
+        }
+    }
+
+    $scope.create_nav=function ()
+    {
         let id_1=uuid2.newid();
         let id_2=uuid2.newid();
+
         let temp=`
 <div class="row ac-nav" ac-edit="" id="${id_1}" name="${id_1}" data-dom-type="nav">
-    <div class="ac-nav-item" ac-edit="" id="${id_2}" name="${id_2}" data-dom-type="nav-item">导航1</div>
+    <div class="ac-nav-item" ac-edit="" id="${id_2}" name="${id_2}" data-dom-type="nav-item">
+    <a  style="height: 100%;width: 100%" ng-click="stop_a($event)" data-a-type="href" href="">
+        <div style="padding: 10px;width: 100%;height: 100%;">导航1</div>
+    </a>
+    </div>
 </div>
         `;
         let ele=$compile(temp)($scope);
@@ -784,8 +827,11 @@ app.controller("rootController",function (
     {
         let temp=``;
         let uuid=uuid2.newid();
-        let safe=HtmlUtil.htmlEncodeByRegExp(p);
-        temp+=`<div id="${uuid}" name="${uuid}" ac-edit data-dom-type="p"><p>${safe}</p></div>`
+        let safe=HtmlUtil.htmlEncodeByRegExp(p.p);
+        if(p.type=='p')
+            temp+=`<div id="${uuid}" name="${uuid}" ac-edit data-dom-type="p"><p>${safe}</p></div>`
+        else
+            temp+=`<div id="${uuid}" name="${uuid}" ac-edit data-dom-type="p"><p>{{${safe}}</p></div>`;
 
         let ele=$compile(temp)($scope);
 
@@ -822,14 +868,24 @@ app.controller("rootController",function (
 
     $scope.create_document=function (doc)
     {
-        let safe=HtmlUtil.toSafeHtml(doc);
+        let safe=HtmlUtil.toSafeHtml(doc.document);
         let temp=``;
         let uuid=uuid2.newid();
-
-        temp+=`
+        if(doc.type=="document")
+        {
+            temp+=`
 <div id="${uuid}" name="${uuid}" ac-edit data-dom-type="document">
 ${safe}
 </div>`;
+        }
+        else if(doc.type=="data")
+        {
+            temp+=`
+<div id="${uuid}" name="${uuid}" ac-edit 
+    data-dom-type="document-data" data-document-data="${safe}">
+    {{${safe}|to_trusted}}
+</div>`;
+        }
 
         let ele=$compile(temp)($scope);
 
@@ -960,8 +1016,12 @@ ${safe}
         {
             attr+=` ui-sref="${a.url}" `;
         }
+        else if(a.type=='data')
+        {
+            attr+=` ng-href={{${a.url}}} `;
+        }
         let uuid=uuid2.newid();
-        temp+=`<a id="${uuid}" name="${uuid}"  data-dom-type="a" ng-click="stop_a()"
+        temp+=`<a id="${uuid}" name="${uuid}"  ${attr}  data-dom-type="a" ng-click="stop_a($event)" data-a-type="${a.type}"
                 ac-edit ac-drag-in style="min-height: 2px;min-width: 15px;">${a.data}</a>`;
 
         let ele=$compile(temp)($scope);
@@ -1028,34 +1088,629 @@ ${safe}
         }
     }
 
-    $scope.create_movie=function ()
-    {
-        //TODO: 未完成
-        let temp=``;
 
-        temp=`
-<videogular vg-theme="controller.config.theme">
-	<vg-media vg-src="controller.config.sources" vg-tracks="controller.config.tracks"></vg-media>
-    <vg-controls>
-        <vg-play-pause-button></vg-play-pause-button>
-		<vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
-		<vg-scrub-bar>
-			<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-		</vg-scrub-bar>
-		<vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
-		<vg-volume>
-			<vg-mute-button></vg-mute-button>
-			<vg-volume-bar></vg-volume-bar>
-		</vg-volume>
-		<vg-fullscreen-button></vg-fullscreen-button>
-	</vg-controls>
- 
-	<vg-overlay-play></vg-overlay-play>
-	<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>
-</videogular>
-`;
+    $scope.not_edit=["container","normal","layout-row","layout-col"];
+    $scope.edit_dom=function ()
+    {
+        /*
+        * normal:"普通元素",
+         nav:"导航条",
+         "nav-item":"导航按钮",
+         document:"格式文本",
+         p:"无格式文本",
+         a:"超链接",
+         img:"图片",
+         repeat:"循环模版",
+         "in-repeat":"循环模版子元素",
+         "table":"表格",
+         tr:"表格的行",
+         tb:"表格的列",
+         ul:"列表",
+         li:"列表的行",
+         page:"分页按钮",
+         "layout-row":"布局div(行)", //布局div row col-xs - *
+         "layout-col":"布局div(列)",
+         carousel:"轮播图",
+         movie:"视频",
+         container:"底部容器"
+        * */
+        $scope.state='edit_dom';
+        $scope.all_stop();
+    }
+
+    $scope.edit_nav_add=function ()
+    {
+        let model=$uibModal.open({
+            templateUrl:"admin/partial/edit/edit_nav_ctrl.html",
+            controller:"edit_nav_ctrl",
+            backdrop:"static"
+        });
+        model.result.then(function (reback)
+        {
+            $scope.nav_item_add(reback);
+        },function (re) {
+            console.log(re);
+        })
+    }
+
+    $scope.nav_item_add=function (nav_item)
+    {
+        let temp=``;
+        let uuid=uuid2.newid();
+        let attr=``;
+        if(nav_item.type=="sref")
+        {
+            attr+=` ui-sref="${nav_item.url}" `;
+        }
+        else if(nav_item.type=='data')
+        {
+            attr+=` ng-href={{${nav_item.url}} `;
+        }
+        else
+        {
+            attr+=` href="${nav_item.url}" `;
+        }
+
+        temp+=`
+<div class="ac-nav-item" ac-edit="" id="${uuid}" name="${uuid}" 
+    data-dom-type="nav-item">
+    <a ${attr} style="height: 100%;width: 100%" ng-click="stop_a($event)" data-a-type="${nav_item.type}">
+        <div style="padding: 10px;width: 100%;height: 100%;">${nav_item.data}</div>
+    </a>
+ </div>`;
+
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        edit_box.find($scope.edit.item_id).append(temp);
+
+    }
+
+    $scope.edit_nav_item_data=function ()
+    {
+        let text=$scope.edit.item.find("div").text();
+        let modal=$uibModal.open({
+            templateUrl:"admin/partial/edit/edit_nav_item_ctrl.html",
+            controller:"edit_nav_item_ctrl",
+            backdrop:"static",
+            resolve:{
+                text:function ()
+                {
+                    return angular.copy(text);
+                }
+            }
+        });
+
+        modal.result.then(function (re)
+        {
+            $scope.modify_nav_item_data(re);
+        },function (re)
+        {
+            console.log(re);
+        })
+    }
+
+    $scope.modify_nav_item_data=function (text)
+    {
+        $scope.edit.item.find("div").text(text);
+
+        edit_box.find($scope.edit.item_id).find("div").text(text);
+    }
+
+    $scope.edit_nav_item_url=function ()
+    {
+        let a=$scope.edit.item.find("a");
+        let type=a.attr("data-a-type");
+        let url="";
+        if(type=='href')
+        {
+            url=a.attr("href");
+        }
+        else if(type=="sref")
+        {
+            url=a.attr("ui-sref")
+        }
+        else if(type=='data')
+        {
+            let u=a.attr("ng-href");
+            u=u.substring(2,u.length());
+            u=u.substring(0,u.length-2);
+            url=u;
+        }
+
+        let modal=$uibModal.open({
+            templateUrl:"admin/partial/edit/edit_nav_url_ctrl.html",
+            controller:"edit_nav_url_ctrl",
+            backdrop:"static",
+            resolve:{
+                a:function ()
+                {
+                    return angular.copy({type:type,url:url});
+                }
+            }
+        });
+
+        modal.result.then(function (re)
+        {
+            $scope.modify_nav_item_url(re);
+        },function (re)
+        {
+            console.log(re);
+        })
+    }
+
+    $scope.modify_nav_item_url=function (nav_item)
+    {
+        let a=$scope.edit.item.find("a");
+        let a_e=edit_box.find($scope.edit.item_id).find("a");
+        let type=a.attr("data-a-type");
+
+        if(type=='href')
+        {
+            a.removeAttr("href");
+            a_e.removeAttr("href");
+        }
+        else if(type=='sref')
+        {
+            a.removeAttr("ui-sref");
+            a_e.removeAttr("ui-sref");
+        }
+        else if(type=='data')
+        {
+            a.removeAttr("ng-href");
+            a_e.removeAttr("ng-href");
+        }
+
+        if(nav_item.type=='sref')
+        {
+            a.attr("ui-sref",nav_item.url);
+            a_e.attr("ui-sref",nav_item.url);
+        }
+        else if(nav_item.type=='href')
+        {
+            a.attr("href",nav_item.url);
+            a_e.attr("href",nav_item.url);
+        }
+        else if(nav_item.type=='data')
+        {
+            a.attr("ng-href","{{"+nav_item.url+"}}")
+            a_e.attr("ng-href","{{"+nav_item.url+"}}")
+        }
+    }
+
+    $scope.edit_a_data=function ()
+    {
+        let text=$scope.edit.item.text();
+        let modal=$uibModal.open({
+            templateUrl:"admin/partial/edit/edit_a_data_ctrl.html",
+            controller:"edit_a_data_ctrl",
+            backdrop:"static",
+            resolve:{
+                text:function ()
+                {
+                    return angular.copy(text)
+                }
+            }
+        })
+
+        modal.result.then(function (re)
+        {
+            $scope.modify_a_data(re);
+        },function (re)
+        {
+            console.log(re)
+        })
+    }
+
+    $scope.modify_a_data=function (text)
+    {
+        $scope.edit.item.text(text);
+
+        edit_box.find($scope.edit.item_id).text(text);
+    }
+
+    $scope.edit_a_url=function ()
+    {
+        let a=$scope.edit.item;
+        let type=a.attr("data-a-type");
+        let url="";
+        if(type=='href')
+        {
+            url=a.attr("href");
+        }
+        else if(type=="sref")
+        {
+            url=a.attr("ui-sref")
+        }
+        else if(type=='data')
+        {
+            let u=a.attr("ng-href");
+            u=u.substring(2,u.length());
+            u=u.substring(0,u.length-2);
+            url=u;
+        }
+
+        let modal=$uibModal.open({
+            templateUrl:"admin/partial/edit/edit_a_url_ctrl.html",
+            controller:"edit_a_url_ctrl",
+            backdrop:"static",
+            resolve:{
+                a:function ()
+                {
+                    return angular.copy({type:type,url:url});
+                }
+            }
+        });
+
+        modal.result.then(function (re)
+        {
+            $scope.modify_a_url(re);
+        },function (re)
+        {
+            console.log(re);
+        })
+    }
+
+    $scope.modify_a_url=function (nav_item)
+    {
+        let a=$scope.edit.item;
+        let a_e=edit_box.find($scope.edit.item_id);
+        let type=a.attr("data-a-type");
+
+        if(type=='href')
+        {
+            a.removeAttr("href");
+            a_e.removeAttr("href");
+        }
+        else if(type=='sref')
+        {
+            a.removeAttr("ui-sref");
+            a_e.removeAttr("ui-sref");
+        }
+        else if(type=='data')
+        {
+            a.removeAttr("ng-href");
+            a_e.removeAttr("ng-href");
+        }
+
+        if(nav_item.type=='sref')
+        {
+            a.attr("ui-sref",nav_item.url);
+            a_e.attr("ui-sref",nav_item.url);
+        }
+        else if(nav_item.type=='href')
+        {
+            a.attr("href",nav_item.url);
+            a_e.attr("href",nav_item.url);
+        }
+        else if(nav_item.type=='data')
+        {
+            a.attr("ng-href","{{"+nav_item.url+"}}")
+            a_e.attr("ng-href","{{"+nav_item.url+"}}")
+        }
+    }
+
+    $scope.add_movie=function ()
+    {
+        let modal=$uibModal.open({
+            templateUrl:"admin/partial/edit/add_movie_ctrl.html",
+            controller:"add_movie_ctrl",
+            backdrop:"static",
+        })
+
+        modal.result.then(function (movie)
+        {
+            $scope.create_movie(movie);
+        },function () {})
+    }
+
+    $scope.create_movie=function (movie)
+    {
+        let temp=``;
+        let uuid=uuid2.newid();
+        if(movie.type=="out"||movie.type=="upload")
+        {
+            temp+=`<div id="${uuid}" name="${uuid}" style="width: 400px;height: 300px;" data-movie-type="${movie.type}"
+                       my-video video-src="${movie.src}" video-type="${movie.videoType}"  ac-edit data-dom-type="movie">`;
+        }
+        else
+        {
+            temp+=`<div id="${uuid}" name="${uuid}"  my-video  my-src="${movie.src}" video-type="${movie.videoType}"
+                      data-movie-type="${movie.type}"   style="width: 400px;height: 300px;"    ac-edit data-dom-type="movie-data">`
+        }
+
+        temp+=`</div>`;
+
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+    }
+
+    $scope.add_table=function ()
+    {
+        alert("该功能未完成");
+    }
+
+    $scope.add_ul=function ()
+    {
+        alert("该功能未完成");
+    }
+
+    $scope.add_repeat=function ()
+    {
+        alert("该功能未完成");
+    }
+
+    $scope.add_page=function ()
+    {
+        alert("该功能未完成");
+    }
+
+    $scope.edit_document_p=function ()
+    {
+        let doc=$scope.edit.item.html();
+
+        let modal=$uibModal.open({
+            templateUrl:"admin/partial/edit/edit_document_p.html",
+            controller:"edit_document_p",
+            backdrop:"static",
+            resolve:{
+                doc:function () {
+                    return angular.copy(doc);
+                }
+            }
+        })
+
+        modal.result.then(function (doc) {
+            $scope.modify_doc_p(doc)
+        },function () {
+
+        })
+    }
+
+    $scope.modify_doc_p=function (doc)
+    {
+        let d=HtmlUtil.toSafeHtml(doc);
+        $scope.edit.item.html(d);
+        edit_box.find($scope.edit.item_id).html(d);
+    }
+
+    $scope.edit_document_data=function ()
+    {
+        let data=$scope.edit.item.attr("data-document-data");
+        let modal=$uibModal.open({
+            backdrop:"static",
+            templateUrl:"admin/partial/edit/edit_document_data.html",
+            controller:"edit_document_data",
+            resolve:{
+                data:function ()
+                {
+                    return angular.copy(data);
+                }
+            }
+        })
+
+        modal.result.then(function (data)
+        {
+            $scope.modify_doc_data(data);
+        },function () {
+
+        })
+    }
+
+    $scope.modify_doc_data=function (data)
+    {
+        let safe=HtmlUtil.toSafeHtml(data);
+        $scope.edit.item.attr("data-document-data",safe);
+        let h=`{{${safe}|to_trusted}}`;
+        $scope.edit.item.html(h);
+        let e= edit_box.find($scope.edit.item_id);
+        e.html(h);
+        e.attr("data-document-data",safe);
+    }
+
+    $scope.edit_movie_ctrl=function ()
+    {
+        let movie={};
+        movie.type=$scope.edit.item.attr("data-movie-type");
+        if(movie.type=='out'||movie.type=='upload')
+        {
+            movie.src=$scope.edit.item.attr("video-src");
+        }
+        else if(movie.type=='data')
+        {
+            movie.src=$scope.edit.item.attr("my-src");
+        }
+        movie.videoType=$scope.edit.item.attr("video-type");
+        let modal=$uibModal.open({
+            templateUrl:"admin/partial/edit/edit_movie_ctrl.html",
+            controller:"edit_movie_ctrl",
+            backdrop:"static",
+            resolve:{
+                movie:function ()
+                {
+                    return angular.copy(movie);
+                }
+            }
+        })
+
+        modal.result.then(function (re)
+        {
+            $scope.modify_movie_src(re);
+        },function () {})
+    }
+
+    $scope.modify_movie_src=function (movie)
+    {
+        let ele=edit_box.find($scope.edit.item_id);
+
+        $scope.edit.item.attr("data-movie-type",movie.type);
+        ele.attr("data-movie-type",movie.type);
+        $scope.edit.item.attr("video-type",movie.videoType);
+        ele.attr("video-type",movie.videoType);
+
+        if(movie.type=='out'||movie.type=='upload')
+        {
+            $scope.edit.item.attr("video-src",movie.src);
+            ele.attr("video-src",movie.src);
+            $scope.edit.item.attr("data-dom-type","movie");
+            ele.attr("data-dom-type","movie");
+        }
+        else if(movie.type=="data")
+        {
+            $scope.edit.item.attr("my-src",movie.src);
+            ele.edit.item.attr("my-src",movie.src);
+            $scope.edit.item.attr("data-dom-type","movie-data");
+            ele.attr("data-dom-type","movie-data");
+        }
+
+    }
+
+    $scope.add_carousel=function ()
+    {
+        alert("该功能未完成");
     }
 });
+app.controller("edit_movie_ctrl",function ($scope, $uibModalInstance, Upload, movie)
+{
+    $scope.movie=movie;
+
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.change=function (type)
+    {
+        $scope.movie.type=type;
+    }
+
+    $scope.ok=function ()
+    {
+        if($scope.movie.type=='upload')
+        {
+            if (!$scope.data.file) {
+                return;
+            }
+            $scope.upload=true;
+            $scope.upbtn=true;
+            Upload.upload({
+                url:"manage/upload",
+                data:$scope.data,
+            }).success(function (res) {
+                if(res.status)
+                {
+                    $uibModalInstance.close({type:$scope.movie.type,src:res.data,videoType:$scope.movie.videoType});
+                }
+                else
+                {
+                    $scope.upload=false;
+                    alert(res.message);
+                }
+            }).error(function (error) {
+                console.log('error',error);
+                $scope.upbtn=false;
+            });
+        }
+        else if($scope.movie.type=='out'||$scope.movie.type=='data')
+        {
+            $uibModalInstance.close($scope.movie);
+        }
+    }
+})
+app.controller("add_movie_ctrl",function ($scope,$uibModalInstance,Upload)
+{
+    $scope.state=1;
+    $scope.type="";
+    $scope.movie_video="";
+    $scope.movie_type="";
+    $scope.data = {
+        file: null
+    };
+    $scope.upload=false;
+    $scope.cancel=function () {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.next=function (type)
+    {
+        $scope.type=type;
+        $scope.state=2;
+    }
+
+    $scope.ok=function ()
+    {
+        if($scope.type=='upload')
+        {
+            if (!$scope.data.file) {
+                return;
+            }
+            $scope.upload=true;
+            $scope.upbtn=true;
+            Upload.upload({
+                url:"manage/upload",
+                data:$scope.data,
+            }).success(function (res) {
+                if(res.status)
+                {
+                    $uibModalInstance.close({type:$scope.type,src:res.data,videoType:$scope.movie_type});
+                }
+                else
+                {
+                    $scope.upload=false;
+                    alert(res.message);
+                }
+            }).error(function (error) {
+                console.log('error',error);
+                $scope.upbtn=false;
+            });
+        }
+        else if($scope.type=='out'||$scope.type=='data')
+        {
+            $uibModalInstance.close({type:$scope.type,src:$scope.movie_video,videoType:$scope.movie_type});
+        }
+    }
+})
+app.controller("edit_document_data",function ($scope,HtmlUtil,$uibModalInstance,data)
+{
+    $scope.data=data;
+
+    $scope.cancel=function () {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.ok=function ()
+    {
+        if($scope.data!="")
+            $uibModalInstance.close(HtmlUtil.toSafeHtml($scope.data));
+        else
+            alert("数据不可为空");
+    }
+
+
+})
+app.controller("edit_document_p",function ($scope,HtmlUtil,$uibModalInstance,doc)
+{
+    $scope.doc=doc;
+    $scope.config={};
+    $scope.cancel=function () {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.ok=function ()
+    {
+        let doc=HtmlUtil.toSafeHtml($scope.doc);
+        $uibModalInstance.close(doc);
+    }
+})
 app.controller("api_data_ctrl",function ($scope,$uibModalInstance,api_data,$http)
 {
     //TODO: 可附加$stateParams附带的参数 未完成
@@ -1065,7 +1720,9 @@ app.controller("api_data_ctrl",function ($scope,$uibModalInstance,api_data,$http
     $scope.edit={
         show:"",
         url:"",
-        module:""
+        module:"",
+        api:"page",
+        data:""
     };
     $scope.module={};
 
@@ -1098,7 +1755,7 @@ app.controller("api_data_ctrl",function ($scope,$uibModalInstance,api_data,$http
             {
                 if($scope.edit.module!="")
                 {
-                    $scope.edit.url="api/"+$scope.edit.module+"/page";
+                    $scope.edit.url="api/"+$scope.edit.module+"/"+$scope.edit.api;
 
                     $http.post("manage/module_name",{module:$scope.edit.module})
                         .success(function (result)
@@ -1174,6 +1831,14 @@ app.controller("add_layout_ctrl",function ($scope,$uibModalInstance)
 app.controller("add_p_ctrl",function ($scope,HtmlUtil,$uibModalInstance)
 {
     $scope.p="";
+    $scope.state=1;
+    $scope.type="";
+
+    $scope.next=function (type)
+    {
+        $scope.type=type;
+        $scope.state=2;
+    }
     $scope.cancel=function ()
     {
         $uibModalInstance.dismiss("cancel");
@@ -1185,7 +1850,7 @@ app.controller("add_p_ctrl",function ($scope,HtmlUtil,$uibModalInstance)
 
        if(p!="")
        {
-           $uibModalInstance.close(p);
+           $uibModalInstance.close({p:p,type:$scope.type});
        }
        else
        {
@@ -1196,23 +1861,39 @@ app.controller("add_p_ctrl",function ($scope,HtmlUtil,$uibModalInstance)
 app.controller("add_document_ctrl",function ($scope, HtmlUtil, $uibModalInstance)
 {
     $scope.doc="";
+    $scope.docx="";
     $scope.config={};
+    $scope.state=1;
+    $scope.type="";
+
     $scope.cancel=function () {
         $uibModalInstance.dismiss("cancel");
     }
 
+    $scope.next=function (type)
+    {
+        $scope.type=type;
+        $scope.state=2;
+    }
+
     $scope.ok=function ()
     {
-        if($scope.doc!="")
-        {
-            let doc=HtmlUtil.toSafeHtml($scope.doc);
-            $uibModalInstance.close(doc);
-        }
-        else
+        if($scope.doc!=""&&$scope.docx!="")
         {
             alert("不可以添加空文本");
         }
+        else
+        {
+            let doc="";
+            if($scope.type=="data")
+                doc=HtmlUtil.toSafeHtml($scope.doc);
+            else
+                doc=HtmlUtil.toSafeHtml($scope.docx);
+            $uibModalInstance.close({document:doc,type:$scope.type});
+        }
     }
+
+
 })
 app.controller("add_div_ctrl",function ($scope,$uibModalInstance)
 {
@@ -1223,8 +1904,8 @@ app.controller("add_div_ctrl",function ($scope,$uibModalInstance)
 
     $scope.edit_css={
         width:undefined,
-        color:undefined,
-        height:"#000000",
+        height:undefined,
+        color:"#000000",
         "background-color":"#ffffff"
     };
 
@@ -1233,13 +1914,18 @@ app.controller("add_div_ctrl",function ($scope,$uibModalInstance)
         $uibModalInstance.close($scope.edit_css);
     }
 })
-app.controller("add_a_ctrl",function ($scope,$uibModalInstance,$http)
+app.controller("add_a_ctrl",function ($scope,$uibModalInstance,$http,HtmlUtil)
 {
     $scope.a={
         type:"sref",
         url:"",
         data:""
     }
+
+    $scope.state=1;
+
+    $scope.url="";
+    $scope.params="";
 
     $scope.router={};
 
@@ -1252,32 +1938,33 @@ app.controller("add_a_ctrl",function ($scope,$uibModalInstance,$http)
             }
         })
 
-    $scope.web_url=true;
+
     $scope.cancel=function () {
         $uibModalInstance.dismiss("cancel")
     }
 
-    $scope.web_in=function ()
-    {
-        $scope.a.type="sref";
-        $scope.web_url=true;
-    }
-
-    $scope.web_out=function ()
-    {
-        $scope.a.type="href";
-        $scope.web_url=false;
-    }
 
     $scope.ok=function ()
     {
+        if($scope.a.type=='sref')
+        {
+            $scope.a.url=$scope.url+$scope.params;
+        }
+        $scope.a.data=HtmlUtil.htmlEncodeByRegExp($scope.a.data);
         $uibModalInstance.close($scope.a);
+    }
+
+    $scope.next=function (type)
+    {
+        $scope.a.type=type;
+        $scope.state=2;
     }
 })
 app.controller("add_img_ctrl",function ($scope,$http,$uibModalInstance,Upload)
 {
     $scope.state=1;
     $scope.type="";
+    $scope.pic_img="";
     $scope.data = {
         file: null
     };
@@ -1294,29 +1981,220 @@ app.controller("add_img_ctrl",function ($scope,$http,$uibModalInstance,Upload)
 
     $scope.ok=function ()
     {
-        if (!$scope.data.file) {
-            return;
+        if($scope.type=='upload')
+        {
+            if (!$scope.data.file) {
+                return;
+            }
+            $scope.upload=true;
+            Upload.upload({
+                url:"manage/upload",
+                data:$scope.data,
+            }).success(function (res) {
+                if(res.status)
+                {
+                    $uibModalInstance.close({type:$scope.type,src:res.data});
+                }
+                else
+                {
+                    $scope.upload=false;
+                    alert(res.message);
+                }
+            }).error(function (error) {
+                console.log('error',error);
+            });
         }
-        $scope.upload=true;
-        Upload.upload({
-            url:"manage/upload",
-            data:$scope.data,
-        }).success(function (res) {
-            if(res.status)
-            {
-                $uibModalInstance.close({type:$scope.type,src:res.data});
-            }
-            else
-            {
-                $scope.upload=false;
-                alert(res.message);
-            }
-        }).error(function (error) {
-            console.log('error',error);
-        });
+        else if($scope.type=='out'||$scope.type=='data')
+        {
+            $uibModalInstance.close({type:$scope.type,src:$scope.pic_img});
+        }
     }
 
 })
+app.controller("edit_nav_ctrl",function ($scope, $http, $uibModalInstance,HtmlUtil)
+{
+    $scope.state=1;
+    $scope.a={
+        type:"",
+        url:"",
+        data:""
+    }
+    $scope.url="";
+    $scope.params="";
+
+    $scope.router={};
+
+    $http.post("router/items",{})
+        .success(function (result)
+        {
+            if(result.status)
+            {
+                $scope.router=result.data;
+            }
+        })
+
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    //初始化的导航条只有一个按钮
+    //通过编辑 添加按钮 指向不懂页面
+
+    $scope.ok=function ()
+    {
+        if($scope.a.type=='sref')
+        {
+            $scope.a.url=$scope.url+$scope.params;
+        }
+        $scope.a.data=HtmlUtil.htmlEncodeByRegExp($scope.a.data);
+        $uibModalInstance.close($scope.a);
+    }
+
+    $scope.next=function (type)
+    {
+        $scope.a.type=type;
+        $scope.state=2;
+    }
+
+})
+app.controller("edit_nav_item_ctrl",function ($http, $scope, HtmlUtil, $uibModalInstance,text)
+{
+    $scope.text=text;
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.ok=function ()
+    {
+        let text=HtmlUtil.htmlEncodeByRegExp($scope.text);
+        $uibModalInstance.close(text);
+    }
+})
+app.controller("edit_nav_url_ctrl",function ($scope,$http,$uibModalInstance,a)
+{
+    $scope.a=a;
+    $scope.url="";
+    $scope.params="";
+
+    $scope.getup=function ()
+    {
+        let uu=$scope.a.url.split("({");
+
+        $scope.url=uu[0];
+
+        if(uu.hasOwnProperty(1))
+        {
+            $scope.params="({"+uu[1];
+        }
+    }
+
+    $scope.getup();
+
+    $scope.router={};
+
+    $http.post("router/items",{})
+        .success(function (result)
+        {
+            if(result.status)
+            {
+                $scope.router=result.data;
+            }
+        })
+
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.type=function (type)
+    {
+        if($scope.a.type=='sref')
+        {
+            $scope.a.url=$scope.url+$scope.params;
+        }
+        $scope.a.type=type;
+    }
+
+    $scope.ok=function ()
+    {
+        if($scope.a.type=='sref')
+        {
+            $scope.a.url=$scope.url+$scope.params;
+        }
+        $uibModalInstance.close($scope.a);
+    }
+
+})
+app.controller("edit_a_data_ctrl",function ($scope,$http,$uibModalInstance,text,HtmlUtil)
+{
+    $scope.text=text;
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+    $scope.ok=function ()
+    {
+        let text=HtmlUtil.htmlEncodeByRegExp($scope.text);
+        $uibModalInstance.close(text);
+    }
+})
+app.controller("edit_a_url_ctrl",function ($scope,$http,$uibModalInstance,a,HtmlUtil)
+{
+    $scope.a=a;
+    $scope.url="";
+    $scope.params="";
+
+    $scope.getup=function ()
+    {
+        let uu=$scope.a.url.split("({");
+
+        $scope.url=uu[0];
+
+        if(uu.hasOwnProperty(1))
+        {
+            $scope.params="({"+uu[1];
+        }
+    }
+
+    $scope.getup();
+
+    $scope.router={};
+
+    $http.post("router/items",{})
+        .success(function (result)
+        {
+            if(result.status)
+            {
+                $scope.router=result.data;
+            }
+        })
+
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.type=function (type)
+    {
+        if($scope.a.type=='sref')
+        {
+            $scope.a.url=$scope.url+$scope.params;
+        }
+        $scope.a.type=type;
+    }
+
+    $scope.ok=function ()
+    {
+        if($scope.a.type=='sref')
+        {
+            $scope.a.url=$scope.url+$scope.params;
+        }
+        $uibModalInstance.close($scope.a);
+    }
+})
+
 app.directive("acEdit",function ($compile, $parse,uuid2)
 {
     return {
@@ -1419,7 +2297,8 @@ app.directive("acDragIn",function ($compile, $parse,uuid2)
         }
     };
 });
-app.directive("acColor",function () {
+app.directive("acColor",function ()
+{
     return {
         require:"ngModel",
         link:function (scope,elem,attrs,ngModel)
@@ -1476,5 +2355,27 @@ app.service("HtmlUtil",function ()
         s=str.replace(reg,"");
         s=str. replace(reg1,"");
         return s;
+    }
+})
+app.filter('to_trusted',
+    ['$sce',
+        function ($sce)
+        {
+            return function (text) {
+                return $sce.trustAsHtml(text);
+            }
+        }
+    ]
+)
+app.directive("myVideo",function ()
+{
+    return{
+        template:`
+<div style="width:100%;height:100%;background-color: black;position: relative;">
+    <div style="color: #ffffff;position: absolute;top:calc( 50% - 35px );left:calc( 50% - 35px )">
+        <i class="fa fa-play fa-5x" aria-hidden="true"></i>
+    </div>        
+</div>   
+`
     }
 })

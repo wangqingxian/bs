@@ -43,14 +43,13 @@ ttt;
             }
             else
             {
-                $data=<<<ttt
-{$data}
-ttt;
+                $data="{".$data."}";
+
 
             }
 
             $function.=<<<get
-\$scope.model["$k"]={
+\t\t\$scope.model["$k"]={
     \t\tpageNum:1,
     \t\tpageSize:10,
     \t\tselect:[],
@@ -71,7 +70,14 @@ ttt;
             \t\tconsole.log(error);
         \t\t})
 \t\t}
-\t\t\$scope.getdata["$k"]();
+\t\ttry 
+\t\t{
+    \t\t\$scope.getdata["$k"]();
+\t\t} 
+\t\tcatch (err)
+\t\t{
+    \t\tconsole.log(err);
+\t\t}
 \r\n  
 get;
 
@@ -86,8 +92,9 @@ angular.module("ac")
         \$scope.getdata={};
         \$scope.show={};
         \$scope.model={};
-        
-        $function
+        \$scope.params=\$stateParams;
+
+$function
         
     })
 js;

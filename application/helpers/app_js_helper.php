@@ -44,7 +44,11 @@ const app=angular.module("ac",
             "ng-echarts",
             "angular-cgs-utils",
             "ngLodash",
-            "colorpicker.module"
+            "colorpicker.module",
+            "ngSanitize",
+            "com.2fdevs.videogular",
+            "com.2fdevs.videogular.plugins.controls",
+            "com.2fdevs.videogular.plugins.overlayplay",
         ]);
 app.run(function (\$rootScope) {
 

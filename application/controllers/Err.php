@@ -5,7 +5,7 @@
  * Date: 2017/3/31
  * Time: 9:25
  */
-class Error extends CI_Controller
+class Err extends CI_Controller
 {
     function index()
     {

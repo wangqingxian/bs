@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="<?=NPM?>angular-bootstrap-colorpicker/css/colorpicker.min.css">
     <link rel="stylesheet" href="<?=NPM?>jquery-ui-dist/jquery-ui.css">
     <link rel="stylesheet" href="<?=ADMIN_URL?>umeditor/dist/utf8-php/themes/default/css/umeditor.css">
+    <link rel="stylesheet" href="<?=NPM?>videogular-themes-default/videogular.css" >
     <!--js类库-->
     <script src="<?=NPM?>jquery/dist/jquery.js"></script>
     <script src="<?=NPM?>angular/angular.js"></script>
@@ -37,7 +38,6 @@
     <script src="<?=BOWER?>meta.umeditor/src/meta.umeditor.js"></script>
     <script src="<?=NPM?>angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>
     <script src="<?=NPM?>ng-file-upload/dist/ng-file-upload-all.js"></script>
-
     <!--angular控制器等-->
     <script src="<?=ADMIN_JS?>controller/appBaseController.js"></script>
     <?php if(isset($script)) foreach ($script as $item): ?>

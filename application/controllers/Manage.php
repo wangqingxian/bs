@@ -90,7 +90,7 @@ class Manage extends Authox_Controller
             "getTotalMem"=>$provider->getTotalMem(),
 //            "getFreeMem"=>$provider->getFreeMem(),
 //            "getUsedMem"=>$provider->getUsedMem(),
-            "getHostname"=>$provider->getHostname(),
+            "getHostname"=>mb_convert_encoding($provider->getHostname(), 'UTF-8', mb_detect_encoding($provider->getHostname(), array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'))),
             'getCpuCores'=>$provider->getCpuCores(),
             'getCpuPhysicalCore'=>$provider->getCpuPhysicalCores(),
             'getCpuModel'=>$provider->getCpuModel(),
@@ -114,11 +114,13 @@ class Manage extends Authox_Controller
         $os["getDiskFree"]=round(disk_free_space($os["getDisk"])/1024/1024/1024,2)."GB";
         $os["getDiskTotal"]=round(@disk_total_space(".") / (1024 * 1024 * 1024), 2)."GB";
         $os["getTotalMem"]=round($os["getTotalMem"]/1024/1024/1024,0)."GB";
-        echo json_encode(array(
+        $back=array(
             "status"=>true,
             "message"=>"获取成功",
             "data"=>$os
-        ));
+        );
+
+        echo json_encode($back);
     }
 
     /**

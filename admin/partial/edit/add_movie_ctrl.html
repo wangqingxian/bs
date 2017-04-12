@@ -1,0 +1,75 @@
+<div class="modal-content">
+    <div class="modal-header" style="border: none;">
+        <button type="button" class="close" ng-click="cancel()" ng-disabled="upbtn">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">添加视频</h4>
+    </div>
+    <div class="modal-body" >
+        <div class="row">
+            <div class="col-xs-12" ng-show="state==1" >
+                <button class="btn btn-default btn-block img-btn-hover" ng-click="next('out')"  >外部视频</button>
+                <button class="btn btn-default btn-block img-btn-hover" ng-click="next('upload')">上传视频</button>
+                <button class="btn btn-default btn-block img-btn-hover" ng-click="next('data')">后台数据</button>
+            </div>
+            <div class="col-xs-12" ng-show="state==2" >
+                <div ng-show="type=='out'">
+                    <div class="col-xs-2">
+                        外站URL
+                    </div>
+                    <div class="col-xs-10">
+                        <input type="url" class="form-control" ng-model="movie_video">
+                    </div>
+                    <div class="col-xs-2" style="margin-top: 10px">
+                        视频类型
+                    </div>
+                    <div class="col-xs-10" style="margin-top: 10px">
+                        <select class="form-control" ng-model="movie_type">
+                            <option value="mp4">mp4</option>
+                            <option value="webm">webm</option>
+                            <option value="ogg">ogg</option>
+                        </select>
+                    </div>
+                </div>
+                <div ng-show="type=='upload'">
+                    <div class="btn btn-primary" ngf-select ngf-accept="'.mp4,.ogg,.webm'" ngf-pattern="'.mp4,.ogg,.webm'"
+                         ngf-multiple="false" ng-model="data.file">选择视频</div>
+                    {!data.file.name!}
+                    <div>
+                        视频只能播放mp4，webm,ogg类型的，上传大小限制50M。
+                    </div>
+                </div>
+                <div ng-show="type=='data'">
+                    <div class="col-xs-2">
+                        后台数据
+                    </div>
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" ng-model="movie_video">
+                    </div>
+                    <div class="col-xs-2" style="margin-top: 10px">
+                        视频类型
+                    </div>
+                    <div class="col-xs-10" style="margin-top: 10px">
+                        <select class="form-control" ng-model="movie_type">
+                            <option value="mp4">mp4</option>
+                            <option value="webm">webm</option>
+                            <option value="ogg">ogg</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ok()" ng-if="state==2" ng-disabled="upbtn">完成</button>
+        <button class="btn btn-default" ng-click="cancel()" ng-disabled="upbtn">取消</button>
+    </div>
+</div>
+<div ng-if="upload" style="position: absolute;width: 100%;height: 100%;z-index: 999999;
+            background:url('admin/image/loading.gif') no-repeat fixed center;"></div>
+<style>
+    .img-btn-hover:hover{
+        background-color: #5ab770;
+        color: #ffffff;
+    }
+</style>

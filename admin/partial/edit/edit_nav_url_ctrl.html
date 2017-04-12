@@ -3,22 +3,17 @@
         <button type="button" class="close" ng-click="cancel()">
             <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
         </button>
-        <h4 class="modal-title">添加超链接</h4>
+        <h4 class="modal-title">修改url</h4>
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-xs-12" ng-show="state==1">
-                <button class="btn btn-default btn-block a-btn-hover" ng-click="next('href')">外部网站</button>
-                <button class="btn btn-default btn-block a-btn-hover" ng-click="next('sref')">站内页面</button>
-                <button class="btn btn-default btn-block a-btn-hover" ng-click="next('data')">后台数据</button>
-            </div>
-            <div class="col-xs-12" ng-show="state==2">
+            <div class="col-xs-12" >
                 <table id="css_tb_box">
                     <tr>
-                        <td>
-                            <div style="font-size: 16px;" ng-if="a.type=='href'">外部网站url</div>
-                            <div style="font-size: 16px;" ng-if="a.type=='sref'">站内路由</div>
-                            <div style="font-size: 16px;" ng-if="a.type=='data'">后台数据</div>
+                        <td style="width: 215px;">
+                            <button class="btn btn-default btn-xs" style="margin: 0;" ng-class="{'btn-primary':(a.type=='href')}" ng-click="type('href')">外部网站url</button>
+                            <button class="btn btn-default btn-xs" style="margin: 0;" ng-class="{'btn-primary':(a.type=='sref')}" ng-click="type('sref')">站内路由</button>
+                            <button class="btn btn-default btn-xs" style="margin: 0;" ng-class="{'btn-primary':(a.type=='data')}" ng-click="type('data')">后台数据</button>
                         </td>
                         <td>
                             <div ng-show="a.type=='sref'">
@@ -35,20 +30,13 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <div style="font-size: 16px;">展示文字</div>
-                        </td>
-                        <td>
-                            <input type="text" class="form-control" ng-model="a.data">
-                        </td>
-                    </tr>
+
                 </table>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-success" ng-click="ok()" ng-if="state==2">完成</button>
+        <button class="btn btn-success" ng-click="ok()" >完成</button>
         <button class="btn btn-default" ng-click="cancel()">取消</button>
     </div>
 </div>

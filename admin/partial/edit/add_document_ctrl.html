@@ -5,12 +5,27 @@
         </button>
         <h4 class="modal-title">添加格式文本</h4>
     </div>
-    <div class="modal-body" style="height: 400px;">
-        <div  style="width:565px;height:290px;" ng-model='doc'
+    <div class="modal-body" ng-show="state==1">
+        <div class="row">
+            <div class="col-xs-12">
+                <button class="btn btn-default btn-block document-btn-hover" ng-click="next('document')">格式文本</button>
+                <button class="btn btn-default btn-block document-btn-hover" ng-click="next('data')">后台数据</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body" ng-show="state==2&&type=='data'">
+        <div class="row">
+            <div class="col-xs-12">
+                <input type="text" class="form-control" ng-model="doc">
+            </div>
+        </div>
+    </div>
+    <div class="modal-body" ng-show="state==2&&type=='document'" style="height: 400px;">
+        <div  style="width:565px;height:290px;" ng-model='docx'
               meta-umeditor  meta-umeditor-config='config'></div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-success" ng-click="ok()">完成</button>
+        <button class="btn btn-success" ng-click="ok()" ng-if="state==2">完成</button>
         <button class="btn btn-default" ng-click="cancel()">取消</button>
     </div>
 </div>
@@ -18,5 +33,9 @@
     .edui-editor-body {
         height:290px;
         overflow-y: auto;
+    }
+    .document-btn-hover:hover{
+        background-color: #5ab770;
+        color: #ffffff;
     }
 </style>
