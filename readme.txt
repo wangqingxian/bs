@@ -11,11 +11,11 @@ extension=php_fileinfo.dll
 格式文本  ok
 普通文本  ok
 div布局    ok
-普通图
+普通图    ok
 轮播图
 循环模版
 分页按钮
-表格
-span
-<a>
-视频
+表格       X
+span       ok
+<a>     ok
+视频   ok
