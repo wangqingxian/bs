@@ -145,3 +145,25 @@ angular.module("ac")
         }
     }
 })
+.directive("myCarousel",function ()
+    {
+        return {
+            scope:{
+                mySrc:"=",
+            },
+            template:`
+<uib-carousel active="0" interval="2000" no-wrap="false">
+    <uib-slide ng-repeat="slide in mySrc track by $index" index="$index">
+        <img ng-src="{{slide.image}}"  style="margin:auto;width: 100%;">
+        <div class="carousel-caption">
+            <p>{{slide.text}}</p>
+        </div>
+    </uib-slide>
+</uib-carousel>
+`,
+            controller:function ($scope,$attrs,$element,$transclude)
+            {
+
+            }
+        }
+    })

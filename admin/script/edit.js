@@ -87,6 +87,7 @@ app.controller("rootController",function (
     $scope.show=js_data.hasOwnProperty("show")?js_data["show"]:{};
     //获取数据的函数配置
     $scope.getdata=js_data.hasOwnProperty("getdata")?js_data["getdata"]:{};
+    $scope.pic=js_data.hasOwnProperty("pic")?js_data["pic"]:{};
 
     $scope.select["background-repeat"]=[
         "repeat",
@@ -199,7 +200,6 @@ app.controller("rootController",function (
         "wait",
         "help"
     ];
-
 
     $scope.css=[
         "color",
@@ -565,7 +565,6 @@ app.controller("rootController",function (
         }
     }
 
-
     //确定修改css
     $scope.css_sure=function ()
     {
@@ -616,6 +615,7 @@ app.controller("rootController",function (
         let json=angular.toJson({
             show:$scope.show,
             getdata:$scope.getdata,
+            pic:$scope.pic
         })
 
         $("#json").html(json);
@@ -674,7 +674,6 @@ app.controller("rootController",function (
 
     $scope.add_api_data=function()
     {
-        //TODO: 可附加$stateParams附带的参数
         let modal=$uibModal.open({
             templateUrl: "admin/partial/edit/api_data_ctrl.html",
             controller: "api_data_ctrl",
@@ -697,7 +696,11 @@ app.controller("rootController",function (
             $scope.show=reback.show;
             $scope.getdata=reback.getdata;
 
-            let json=angular.toJson(reback);
+            let json=angular.toJson({
+                show:$scope.show,
+                getdata:$scope.getdata,
+                pic:$scope.pic
+            })
 
             $("#json").html(json);
         },
@@ -1087,7 +1090,6 @@ ${safe}
             edit_box.find($scope.edit.item_id).append(temp);
         }
     }
-
 
     $scope.not_edit=["container","normal","layout-row","layout-col"];
     $scope.edit_dom=function ()
@@ -1576,9 +1578,248 @@ ${safe}
 
     $scope.add_carousel=function ()
     {
-        alert("该功能未完成");
+        let modal=$uibModal.open({
+            backdrop:"static",
+            size:"lg",
+            templateUrl:"admin/partial/edit/add_carousel_ctrl.html",
+            controller:"add_carousel_ctrl"
+        });
+
+        modal.result.then(function (re)
+        {
+            $scope.create_carousel(re);
+        },function () {})
+    }
+    $scope.create_carousel=function (pic)
+    {
+        let uuid=uuid2.newid();
+        $scope.pic[uuid]=pic;
+        let json=angular.toJson({
+            show:$scope.show,
+            getdata:$scope.getdata,
+            pic:$scope.pic
+        })
+        $("#json").html(json);
+        let temp=``;
+
+        temp+=`
+<div name="${uuid}" id="${uuid}" data-dom-type="carousel"  ac-edit
+        style="width: 300px;height: 200px;" my-carousel my-src="pic['${uuid}']">
+
+</div>
+`;
+        let ele=$compile(temp)($scope);
+
+        $scope.edit.item.append(ele);
+        if($scope.edit.item_id=="#container")
+        {
+            edit_box.append(temp);
+        }
+        else
+        {
+            edit_box.find($scope.edit.item_id).append(temp);
+        }
+
+    }
+
+
+    $scope.edit_carousel=function ()
+    {
+        let modal=$uibModal.open({
+            controller:"edit_carousel_ctrl",
+            templateUrl:"admin/partial/edit/edit_carousel_ctrl.html",
+            backdrop:"static",
+            size:"lg",
+            resolve:{
+                pic:function ()
+                {
+                     return angular.copy($scope.pic[$scope.edit.id]);
+                }
+            }
+        })
+
+        modal.result.then(function (re)
+        {
+            $scope.modify_carousel(re);
+        },function ()
+        {
+
+        })
+    }
+
+    $scope.modify_carousel=function (pic)
+    {
+        $scope.pic[$scope.edit.id]=pic;
+
+        let json=angular.toJson({
+            show:$scope.show,
+            getdata:$scope.getdata,
+            pic:$scope.pic,
+        })
+
+        $("#json").html(json);
     }
 });
+app.controller("edit_carousel_ctrl",function ($scope,$uibModalInstance,Upload,pic)
+{
+    $scope.state='show';
+    $scope.pic=pic;
+    $scope.step=1;
+    $scope.data={
+        file:null
+    }
+    $scope.pic_type="";
+    $scope.pic_img="";
+    $scope.pic_text="";
+
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.next=function (type)
+    {
+        $scope.pic_type=type;
+        $scope.step=2;
+    }
+
+    $scope.del_img=function (index,img)
+    {
+        if($scope.pic[index]==img)
+        {
+            $scope.pic.splice(index,1);
+        }
+    }
+
+    $scope.add_img=function ()
+    {
+        if($scope.pic_type=='upload')
+        {
+            if (!$scope.data.file) {
+                return;
+            }
+            $scope.upload=true;
+            Upload.upload({
+                url:"manage/upload",
+                data:$scope.data,
+            }).success(function (res) {
+                if(res.status)
+                {
+                    $scope.pic.push({type:$scope.pic_type,image:res.data,text:$scope.pic_text});
+                    $scope.pic_img="";
+                    $scope.pic_text="";
+                    $scope.pic_type="";
+                    $scope.state="show";
+                    $scope.step=1;
+                    $scope.data={
+                        file:null
+                    }
+                }
+                else
+                {
+                    $scope.upload=false;
+                    alert(res.message);
+                }
+            }).error(function (error) {
+                console.log('error',error);
+            });
+        }
+        else if($scope.pic_type=='out'||$scope.pic_type=='data')
+        {
+            $scope.pic.push({type:$scope.pic_type,image:$scope.pic_img,text:$scope.pic_text});
+            $scope.pic_img="";
+            $scope.pic_text="";
+            $scope.pic_type="";
+            $scope.state="show";
+            $scope.step=1;
+        }
+    }
+
+    $scope.ok=function ()
+    {
+        $uibModalInstance.close($scope.pic);
+    }
+})
+app.controller("add_carousel_ctrl",function ($scope,$uibModalInstance,Upload)
+{
+    $scope.state='show';
+    $scope.pic=[];
+    $scope.step=1;
+    $scope.data={
+        file:null
+    }
+    $scope.pic_type="";
+    $scope.pic_img="";
+    $scope.pic_text="";
+
+    $scope.cancel=function ()
+    {
+        $uibModalInstance.dismiss("cancel");
+    }
+
+    $scope.next=function (type)
+    {
+        $scope.pic_type=type;
+        $scope.step=2;
+    }
+
+    $scope.del_img=function (index,img)
+    {
+        if($scope.pic[index]==img)
+        {
+            $scope.pic.splice(index,1);
+        }
+    }
+
+    $scope.add_img=function ()
+    {
+        if($scope.pic_type=='upload')
+        {
+            if (!$scope.data.file) {
+                return;
+            }
+            $scope.upload=true;
+            Upload.upload({
+                url:"manage/upload",
+                data:$scope.data,
+            }).success(function (res) {
+                if(res.status)
+                {
+                    $scope.pic.push({type:$scope.pic_type,image:res.data,text:$scope.pic_text});
+                    $scope.pic_img="";
+                    $scope.pic_text="";
+                    $scope.pic_type="";
+                    $scope.state="show";
+                    $scope.step=1;
+                    $scope.data={
+                        file:null
+                    }
+                }
+                else
+                {
+                    $scope.upload=false;
+                    alert(res.message);
+                }
+            }).error(function (error) {
+                console.log('error',error);
+            });
+        }
+        else if($scope.pic_type=='out'||$scope.pic_type=='data')
+        {
+            $scope.pic.push({type:$scope.pic_type,image:$scope.pic_img,text:$scope.pic_text});
+            $scope.pic_img="";
+            $scope.pic_text="";
+            $scope.pic_type="";
+            $scope.state="show";
+            $scope.step=1;
+        }
+    }
+
+    $scope.ok=function ()
+    {
+        $uibModalInstance.close($scope.pic);
+    }
+})
 app.controller("edit_movie_ctrl",function ($scope, $uibModalInstance, Upload, movie)
 {
     $scope.movie=movie;
@@ -2377,5 +2618,27 @@ app.directive("myVideo",function ()
     </div>        
 </div>   
 `
+    }
+})
+app.directive("myCarousel",function ()
+{
+    return {
+        scope:{
+            mySrc:"=",
+        },
+        template:`
+<uib-carousel active="0" interval="2000" no-wrap="false">
+    <uib-slide ng-repeat="slide in mySrc track by $index" index="$index">
+        <img ng-src="{{slide.image}}"  style="margin:auto;width: 100%;">
+        <div class="carousel-caption">
+            <p>{{slide.text}}</p>
+        </div>
+    </uib-slide>
+</uib-carousel>
+`,
+        controller:function ($scope,$attrs,$element,$transclude)
+        {
+
+        }
     }
 })

@@ -1,0 +1,120 @@
+<div class="modal-content">
+    <div class="modal-header" style="border: none;">
+        <button type="button" class="close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">添加轮播图</h4>
+    </div>
+    <div class="modal-body" style="height: 480px;overflow: auto;">
+        <div class="row" ng-show="state=='show'">
+            <div class="col-xs-12">
+                <table class="table">
+                    <thead>
+                    <th colspan="3">已有图片&nbsp;
+                        <button class="btn btn-default btn-xs" ng-click="state='add'">添加图片</button>
+                    </th>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>图片</td>
+                        <td>展示文字</td>
+                        <td>操作</td>
+                    </tr>
+                    <tr ng-repeat="img in pic track by $index">
+                        <td width="400px">
+                            <div style="max-width: 400px;max-height: 300px;overflow:auto; ">
+                                <img ng-src="{!img.image!}" class="img-responsive" >
+                            </div>
+                        </td>
+                        <td width="300px">
+                            <div style="min-width: 100px;max-width: 300px;max-height: 300px;overflow:auto; word-wrap: break-word;">
+                                {!img.text!}
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" ng-click="del_img($index,img)">删除</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row" ng-show="state=='add'">
+            <div class="col-xs-12">
+                <table class="table">
+                    <thead>
+                    <th colspan="3">
+                        <button class="btn btn-default btn-xs" ng-click="state='show'">已有图片</button>
+                        &nbsp;已有图片
+                    </th>
+                    </thead>
+
+                </table>
+            </div>
+            <div class="col-xs-12" ng-show="step==1" >
+                <button class="btn btn-default btn-block img-btn-hover" ng-click="next('out')"  >外部图片</button>
+                <button class="btn btn-default btn-block img-btn-hover" ng-click="next('upload')">上传图片</button>
+                <button class="btn btn-default btn-block img-btn-hover" ng-click="next('data')">后台数据</button>
+            </div>
+            <div class="col-xs-12" ng-show="step==2" >
+                <div ng-show="pic_type=='out'">
+                    <div class="col-xs-2">
+                        外站URL
+                    </div>
+                    <div class="col-xs-10">
+                        <input type="url" class="form-control" ng-model="pic_img">
+                    </div>
+                    <div class="col-xs-2">
+                        展示文字
+                    </div>
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" ng-model="pic_text">
+                    </div>
+                </div>
+                <div ng-show="pic_type=='upload'">
+                    <div class="col-xs-12">
+                        <div class="btn btn-primary" ngf-select ngf-accept="'image/*'" ngf-pattern="'image/*'"
+                             ngf-multiple="false" ng-model="data.file">选择图片</div>
+                        {!data.file.name!}
+                    </div>
+                    <div class="col-xs-2" style="padding: 10px 0 0 30px;">
+                        展示文字
+                    </div>
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" ng-model="pic_text">
+                    </div>
+                </div>
+                <div ng-show="pic_type=='data'">
+                    <div class="col-xs-2">
+                        后台数据
+                    </div>
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" ng-model="pic_img">
+                    </div>
+                    <div class="col-xs-2">
+                        展示文字
+                    </div>
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" ng-model="pic_text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12" style="margin-top: 15px;" >
+                <button class="btn btn-default pull-right" ng-click="state='show'" >放弃添加</button>
+                <button class="btn btn-default pull-right" ng-click="add_img()" ng-show="step==2">添加</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ok()" ng-show="state=='show'">完成</button>
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>
+<div ng-if="upload" style="display: none;position: absolute;width: 100%;height: 100%;z-index: 999999;
+            background:url('admin/image/loading.gif') no-repeat fixed center;"></div>
+<style>
+    .img-btn-hover:hover{
+        background-color: #5ab770;
+        color: #ffffff;
+    }
+</style>

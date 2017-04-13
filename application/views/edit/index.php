@@ -683,6 +683,11 @@
                     <tr ng-if="edit.type=='movie'||edit.type=='movie-data'" >
                         <td><button class="btn btn-success" ng-click="edit_movie_ctrl()">更换播放源</button></td>
                     </tr>
+                    <tr ng-if="edit.type=='carousel'">
+                        <td>
+                            <button class="btn btn-success" ng-click="edit_carousel()">更换图片</button>
+                        </td>
+                    </tr>
                 </table>
                 <table class="table" style="margin-top: 15px;">
                     <tr>

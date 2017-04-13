@@ -10,6 +10,7 @@ function js($sn,$config)
     $temp="";
     $function="";
     $getdata=array_key_exists("getdata",$config)?$config["getdata"]:array();
+    $pic=array_key_exists("pic",$config)?$config["pic"]:array();
 
     if(empty($getdata)||!is_array($getdata))
     {
@@ -84,6 +85,30 @@ get;
         }
     }
 
+    $pics="\t\t\$scope.pic={\r\n";
+    foreach ($pic as $k=>$v)
+    {
+        $pics.=<<<img
+\t\t"$k":[\r\n
+img;
+        foreach ($v as $key=>$value)
+        {
+            $img=array_key_exists("image",$value)?$value["image"]:"";
+            $text=array_key_exists("text",$value)?$value["text"]:"";
+            $pics.=<<<img
+\t\t\t{
+\t\t\t\timage:"$img",
+\t\t\t\ttext:"$text",
+\t\t\t},
+
+img;
+        }
+        $pics.=<<<img
+\t\t\t],\r\n
+img;
+
+    }
+    $pics.="\t\t}";
     $temp.=<<<js
 angular.module("ac")
     .controller("$sn",function(\$http,\$scope,\$stateParams)
@@ -95,7 +120,8 @@ angular.module("ac")
         \$scope.params=\$stateParams;
 
 $function
-        
+$pics        
+    
     })
 js;
 
